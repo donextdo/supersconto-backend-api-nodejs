@@ -1,0 +1,868 @@
+{
+	"info": {
+		"_postman_id": "258d235c-4a12-44ed-965d-d35b215b33f6",
+		"name": "Supersconto Local",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Shop",
+			"item": [
+				{
+					"name": "Get Shops",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/shop",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"shop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Shop",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "shop_name",
+									"value": "Drogon's Shop",
+									"type": "default"
+								},
+								{
+									"key": "description",
+									"value": "This is dragon shop of superscontro",
+									"type": "default"
+								},
+								{
+									"key": "address[address_line1]",
+									"value": "No. 346",
+									"type": "default"
+								},
+								{
+									"key": "address[address_line2]",
+									"value": "White Chappel St.",
+									"type": "default"
+								},
+								{
+									"key": "address[address_line3]",
+									"value": "Somewhere",
+									"type": "default"
+								},
+								{
+									"key": "address[state]",
+									"value": "London",
+									"type": "default"
+								},
+								{
+									"key": "address[city]",
+									"value": "London",
+									"type": "default"
+								},
+								{
+									"key": "address[postal_code]",
+									"value": "80000",
+									"type": "default"
+								},
+								{
+									"key": "shop_unique_id",
+									"value": "1234fde",
+									"type": "default"
+								},
+								{
+									"key": "owner_name",
+									"value": "Lakshitha Maduranga",
+									"type": "default"
+								},
+								{
+									"key": "status",
+									"value": "true",
+									"type": "default"
+								},
+								{
+									"key": "logo_img",
+									"type": "file",
+									"src": "/home/oliver/Documents/Web_Dev/donext-projects/supersconto-website-nextjs/assets/shops/sp_1.png"
+								},
+								{
+									"key": "latitude",
+									"value": "234.908",
+									"type": "default"
+								},
+								{
+									"key": "longitude",
+									"value": "9080.89",
+									"type": "default"
+								},
+								{
+									"key": "shop_category",
+									"value": "Weapons",
+									"type": "default"
+								},
+								{
+									"key": "is_online_selling",
+									"value": "true",
+									"type": "default"
+								},
+								{
+									"key": "telephone",
+									"value": "045863925",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/v1/api/shop",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"shop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get shop by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/shop/find/63a07fda09f79ee51627e7ec",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"shop",
+								"find",
+								"63a07fda09f79ee51627e7ec"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update shop",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"shop_name\": \"Dragon Shop\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/v1/api/shop/63a07fda09f79ee51627e7ec",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"shop",
+								"63a07fda09f79ee51627e7ec"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Shop",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/shop/63a07fda09f79ee51627e7ec",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"shop",
+								"63a07fda09f79ee51627e7ec"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Catelog Book",
+			"item": [
+				{
+					"name": "Get All Books",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/book",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"book"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Catelog book",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"shop_id\": \"63a0acc395c3d0e5bd711fc3\",\n    \"title\": \"Christmas Catelog\",\n    \"description\": \"Mega sale for Christmas\",\n    \"expiredate\": \"2022-12-30\",\n    \"status\": 2,\n    \"special_level\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/book",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"book"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Book By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/book/find/63a0b0bd67a80ddf86ef5748",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"book",
+								"find",
+								"63a0b0bd67a80ddf86ef5748"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Catelog Book",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"CHRISTMAS SALE!!! HURRY UP!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/book/63a0b0bd67a80ddf86ef5748",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"book",
+								"63a0b0bd67a80ddf86ef5748"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Catelog Book",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/book/63a0b0bd67a80ddf86ef5748",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"book",
+								"63a0b0bd67a80ddf86ef5748"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By shop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/book?shop=63a0acc395c3d0e5bd711fc3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"book"
+							],
+							"query": [
+								{
+									"key": "shop",
+									"value": "63a0acc395c3d0e5bd711fc3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Catelog Book page",
+			"item": [
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/page",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Page",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "shop_id",
+									"value": "63a0acc395c3d0e5bd711fc3",
+									"type": "default"
+								},
+								{
+									"key": "catelog_book_id",
+									"value": "63a0b2598214fcc285e3262f",
+									"type": "default"
+								},
+								{
+									"key": "page_no",
+									"value": "1",
+									"type": "default"
+								},
+								{
+									"key": "page_image",
+									"type": "file",
+									"src": "/home/oliver/Documents/Web_Dev/donext-projects/supersconto-website-nextjs/assets/flyers/flyer_3.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/page",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get by Catelog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/page?catelog=63a0b2598214fcc285e3262f",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"page"
+							],
+							"query": [
+								{
+									"key": "catelog",
+									"value": "63a0b2598214fcc285e3262f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Catelog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/page/find/63a0bde6e8ee110f882e988f",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"page",
+								"find",
+								"63a0bde6e8ee110f882e988f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Catelog Page",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"page_setup_status\": true,\n    \"product_set_status\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/page/63a0bde6e8ee110f882e988f",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"page",
+								"63a0bde6e8ee110f882e988f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Page",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/page/63a0bde6e8ee110f882e988f",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"page",
+								"63a0bde6e8ee110f882e988f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Shop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/page?shop=63a0acc395c3d0e5bd711fc3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"page"
+							],
+							"query": [
+								{
+									"key": "shop",
+									"value": "63a0acc395c3d0e5bd711fc3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Catelog Book Page Item",
+			"item": [
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/item",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Item",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "shop_id",
+									"value": "63a0acc395c3d0e5bd711fc3",
+									"type": "default"
+								},
+								{
+									"key": "catelog_book_id",
+									"value": "63a0b2598214fcc285e3262f",
+									"type": "default"
+								},
+								{
+									"key": "catelog_page_id",
+									"value": "63a0c07238f398b93b0f1b49",
+									"type": "default"
+								},
+								{
+									"key": "product_name",
+									"value": "Test Product",
+									"type": "default"
+								},
+								{
+									"key": "product_catergory",
+									"value": "Test Category",
+									"type": "default"
+								},
+								{
+									"key": "product_description",
+									"value": "no description",
+									"type": "default"
+								},
+								{
+									"key": "item_index",
+									"value": "1",
+									"type": "default"
+								},
+								{
+									"key": "crop_id",
+									"value": "2",
+									"type": "default"
+								},
+								{
+									"key": "quantity",
+									"value": "23",
+									"type": "default"
+								},
+								{
+									"key": "unit_price",
+									"value": "234",
+									"type": "default"
+								},
+								{
+									"key": "product_image",
+									"type": "file",
+									"src": "/home/oliver/Documents/Web_Dev/donext-projects/supersconto-website-nextjs/assets/flyers/flyer_6.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/item",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get by shop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/item?shop=63a0acc395c3d0e5bd711fc3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"item"
+							],
+							"query": [
+								{
+									"key": "shop",
+									"value": "63a0acc395c3d0e5bd711fc3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get by catelog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/item?catelog=63a0b2598214fcc285e3262f",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"item"
+							],
+							"query": [
+								{
+									"key": "catelog",
+									"value": "63a0b2598214fcc285e3262f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get by page",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/item?page=63a0c07238f398b93b0f1b49",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"item"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "63a0c07238f398b93b0f1b49"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_name\": \"Cheddar Cheese\",\n    \"product_description\": \"cheese\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/item/63a0c90ac97885ac4ec5bf85",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"item",
+								"63a0c90ac97885ac4ec5bf85"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get item",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/item/find/63a0c90ac97885ac4ec5bf85",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"item",
+								"find",
+								"63a0c90ac97885ac4ec5bf85"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/api/catelog/item/63a0c90ac97885ac4ec5bf85",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"api",
+								"catelog",
+								"item",
+								"63a0c90ac97885ac4ec5bf85"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
