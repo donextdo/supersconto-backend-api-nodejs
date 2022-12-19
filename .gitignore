@@ -6,7 +6,7 @@
 # Node artifact files
 node_modules/
 dist/
-public/images/
+public/images/*
 public/landing/images/
 
 # Compiled Java class files
