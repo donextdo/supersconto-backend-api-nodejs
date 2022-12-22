@@ -65,7 +65,7 @@ const getAllCatelogBookPages = async (req, res) => {
 
 const getCatelogBookPage = async (req, res) => {
     try {
-        const catelogBookPage = await CatelogBookPage.findById(req.params.id)
+        const catelogBookPage = await CatelogBookPage.findById(req.params.id).populate("items")
 
         if(!catelogBookPage) {
             return res.status(404).json({msg: `No page associate with ${req.params.is}`})
