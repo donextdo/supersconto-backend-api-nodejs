@@ -12,9 +12,25 @@ const getAllCatelogBook = async (req, res) => {
             catelogBooks = await CatelogBook.find({
                 shop_id: query.shop
             }).sort({_id: -1})
+            .populate({
+                path: 'shop_id',
+                select: 'shop_name'
+            })
+            .populate({
+                path: 'pages',
+                select: 'page_image'
+            })
         }
         else {
             catelogBooks = await CatelogBook.find().sort({_id: -1})
+            .populate({
+                path: 'shop_id',
+                select: 'shop_name'
+            })
+            .populate({
+                path: 'pages',
+                select: 'page_image'
+            })
         }
 
         res.status(200).json(catelogBooks)
