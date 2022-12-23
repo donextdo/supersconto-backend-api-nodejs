@@ -57,7 +57,7 @@ const createCatelogBookPageItem = async (req, res) => {
         const CatelogBookPageItem = await newCatelogBookPageItem.save()
 
         await CatelogBookPage.findByIdAndUpdate(
-            req.body.catelog_page_id,
+            payload.catelog_page_id,
             {
                 $push: {items: CatelogBookPageItem.id}
             }

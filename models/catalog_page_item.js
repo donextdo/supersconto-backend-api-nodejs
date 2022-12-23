@@ -25,7 +25,7 @@ const CatelogBookPageItemSchema = new mongoose.Schema({
         required: true,
     },
 
-    product_catergory: {
+    product_category: {
         type: String,
         // required: true
     },
