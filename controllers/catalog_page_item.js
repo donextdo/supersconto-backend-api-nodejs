@@ -85,6 +85,20 @@ const getCatelogBookPageItem = async (req, res) => {
     }
 }
 
+const getCatelogBookPageItemByIds = async (req, res) => {
+    try {
+        const catelogBookPageItem = await CatelogBookPageItem.find({ '_id': { $in: req.body.items} }).populate('shop_id')
+
+        if(!catelogBookPageItem) {
+            return res.status(404).json({msg: `No catelogBookPageItem associate with ${req.params.is}`})
+        }
+
+        res.status(200).json(catelogBookPageItem)
+    } catch (error) {
+        res.status(500).json(error)
+    }
+}
+
 const updateCatelogBookPageItem = async (req, res) => {
     try {
 
@@ -136,6 +150,7 @@ module.exports = {
     getAllCatelogBookPageItems,
     createCatelogBookPageItem,
     getCatelogBookPageItem,
+    getCatelogBookPageItemByIds,
     updateCatelogBookPageItem,
     deleteCatelogBookPageItem,
     countDocuments

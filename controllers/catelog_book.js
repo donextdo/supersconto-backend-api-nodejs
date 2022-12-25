@@ -62,7 +62,13 @@ const getCatelogBook = async (req, res) => {
 
     try {
 
-        const catelogBook = await CatelogBook.findById(req.params.id)
+        const catelogBook = await CatelogBook.findById(req.params.id).populate({
+            path: 'pages',
+            populate: {
+                path: 'items',
+                model: 'CatelogBookPageItem'
+            }
+        })
 
         if(!catelogBook) {
             return res.status(404).json({msg: `No CatelogBook associate with ${req.params.id}`})

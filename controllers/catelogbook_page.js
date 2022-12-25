@@ -28,6 +28,7 @@ const createCatelogBookPages = async (req, res) => {
         res.status(200).json( catelogBookPage )
 
     } catch (error) {
+        console.log(error)
         res.status(500).json(error)
     }
 }
@@ -43,15 +44,15 @@ const getAllCatelogBookPages = async (req, res) => {
         if(query.catelog){
             CatelogBookPages = await CatelogBookPage.find({
                 catelog_book_id: query.catelog
-            }).sort({_id: -1})
+            }).sort({_id: -1}).populate("items")
         }
         else if(query.shop){
             CatelogBookPages = await CatelogBookPage.find({
                 shop_id: query.shop
-            }).sort({_id: -1})
+            }).sort({_id: -1}).populate("items")
         }
         else {
-            CatelogBookPages = await CatelogBookPage.find().sort({_id: -1})
+            CatelogBookPages = await CatelogBookPage.find().sort({_id: -1}).populate("items")
         }
 
         res.status(200).json(CatelogBookPages)

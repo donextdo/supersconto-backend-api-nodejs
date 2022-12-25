@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
     filename: function(req, file, cb) {
         const filename = uuidv4()
         console.log(file.mimetype)
-        const extention = FILE_TYPE_MAP[file.mimetype]
+        const extention = FILE_TYPE_MAP[file.mimetype] ?? 'jpeg'
         cb(null, `${filename}.${extention}`)
     }
 })

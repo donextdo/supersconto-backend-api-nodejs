@@ -76,7 +76,7 @@ const CatelogBookPageItemSchema = new mongoose.Schema({
     },
     coordinates: {
         type: mongoose.Schema.Types.Mixed,
-        default: false
+        default: {}
     }
 
 }, {timestamps: true})

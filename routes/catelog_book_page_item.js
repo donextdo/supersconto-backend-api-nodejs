@@ -8,7 +8,8 @@ const {
     updateCatelogBookPageItem,
     createCatelogBookPageItem, 
     deleteCatelogBookPageItem, 
-    countDocuments 
+    countDocuments,
+    getCatelogBookPageItemByIds
 } = require('../controllers/catalog_page_item');
 
 const uploadOptions = multer({storage: storage})
@@ -18,6 +19,8 @@ const router = express.Router()
 router.get('/', getAllCatelogBookPageItems)
 
 router.get('/find/:id', getCatelogBookPageItem)
+
+router.post('/find-list', getCatelogBookPageItemByIds)
 
 router.post('/', uploadOptions.single('product_image'), createCatelogBookPageItem)
 
