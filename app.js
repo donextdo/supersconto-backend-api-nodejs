@@ -4,14 +4,15 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require("cors");
 const mongoose = require("mongoose")
-require("dotenv").config()  
+mongoose.set('debug', true);
 
+require("dotenv").config()
 const indexRouter = require('./routes/index');
 const shopRouter = require('./routes/shop')
 const catelogBookRouter = require('./routes/catelog_book')
 const catelogBookPageRouter = require('./routes/catelog_book_page')
-const catelogBookItemRouter = require('./routes/catelog_book_page_item')
 
+const catelogBookItemRouter = require('./routes/catelog_book_page_item')
 const app = express();
 
 app.use(cors());
