@@ -7,7 +7,11 @@ const mongoose = require("mongoose")
 mongoose.set('debug', true);
 
 require("dotenv").config()
+const passport = require('passport');
+require('./config/auth/auth');
+
 const indexRouter = require('./routes/index');
+const authRouter = require('./routes/auth-routes/auth-routes');
 const shopRouter = require('./routes/shop')
 const catelogBookRouter = require('./routes/catelog_book')
 const catelogBookPageRouter = require('./routes/catelog_book_page')
@@ -24,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/public', express.static(__dirname + '/public'))
 
 app.use('/v1/api', indexRouter);
+app.use('/v1/api/auth', authRouter)
 app.use('/v1/api/shop', shopRouter)
 app.use('/v1/api/catelog/book', catelogBookRouter)
 app.use('/v1/api/catelog/page', catelogBookPageRouter)
