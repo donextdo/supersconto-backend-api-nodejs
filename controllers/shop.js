@@ -19,7 +19,7 @@ const createShop = async (req, res) => {
 
     const file = req.file
 
-    if(!file) {
+    if (!file) {
         return res.status(400).send('No Logo Image in request')
     }
 
@@ -27,13 +27,18 @@ const createShop = async (req, res) => {
 
     const {logo_img, ...payload} = req.body
 
-    const newShop = new Shop({ ...payload, logo_img: imgPath })
+    const newShop = new Shop({
+        ...payload,
+        logo_img: imgPath,
+        coordinates: [payload.longitude, payload.latitude]
+        // address: {...payload.address, geometry: {coordinate: [payload.longitude, payload.latitude]}}
+    })
 
     try {
 
         const shop = await newShop.save()
 
-        res.status(200).json( shop )
+        res.status(200).json(shop)
 
     } catch (error) {
         res.status(500).json(error)
@@ -44,7 +49,7 @@ const getShop = async (req, res) => {
     try {
         const shop = await Shop.findById(req.params.id)
 
-        if(!shop) {
+        if (!shop) {
             return res.status(404).json({msg: `No product associate with ${req.params.is}`})
         }
 
@@ -58,20 +63,20 @@ const updateShop = async (req, res) => {
     try {
         const shopExist = await Shop.findById(req.params.id)
 
-        if(!shopExist) {
+        if (!shopExist) {
             return res.status(404).json({msg: `No prodcut with ${req.params.id}`})
         }
 
         const shop = await Shop.findByIdAndUpdate(req.params.id, {
-            $set: req.body
-        },
-        {
-            new: true,
-            runValidators: true
-        })
+                $set: req.body
+            },
+            {
+                new: true,
+                runValidators: true
+            })
 
         res.status(200).json(shop)
-    }catch(error) {
+    } catch (error) {
         res.status(500).json(error)
     }
 }
@@ -80,7 +85,7 @@ const deleteShop = async (req, res) => {
     try {
         const shop = await Shop.findById(req.params.id)
 
-        if(!shop) {
+        if (!shop) {
             return res.status(404).json({msg: `No prodcut with ${req.params.id}`})
         }
 
@@ -88,7 +93,7 @@ const deleteShop = async (req, res) => {
 
         res.status(200).json({msg: 'Successfully delete shop'})
 
-    } catch(error) {
+    } catch (error) {
         res.status(500).json(error)
     }
 }
@@ -98,7 +103,7 @@ const countDocuments = async (req, res) => {
 
         const count = await Shop.countDocuments()
         res.status(200).json(count)
-        
+
     } catch (error) {
         res.status(500).json(error)
     }

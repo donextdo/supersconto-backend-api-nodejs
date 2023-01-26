@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const GeoSchema = require("./geo_schema");
 
 const AddressSchema = new mongoose.Schema({
     address_line1: {
@@ -25,6 +26,9 @@ const AddressSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    // geometry: {
+    //     type: GeoSchema
+    // },
 })
 
 const ShopSchema = new mongoose.Schema({
@@ -88,7 +92,15 @@ const ShopSchema = new mongoose.Schema({
     isDelete: {
         type: Boolean,
         default: false
-    }
+    },
+    coordinates: {
+        type: [Number],
+        index: '2dsphere'
+    },
+    catelog_books: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CatelogBook'
+    }]
 
 }, {timestamps: true})
 
