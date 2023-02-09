@@ -47,7 +47,14 @@ const createShop = async (req, res) => {
 
 const getShop = async (req, res) => {
     try {
-        const shop = await Shop.findById(req.params.id)
+        const shop = await Shop.findById(req.params.id).populate({
+            path: 'catelog_books', populate: {
+                path: 'pages', model: 'CatelogBookPage', populate: {
+                    path: 'items', model: 'CatelogBookPageItem'
+
+                }
+            }
+        })
 
         if (!shop) {
             return res.status(404).json({msg: `No product associate with ${req.params.is}`})
