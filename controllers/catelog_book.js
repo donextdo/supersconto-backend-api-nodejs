@@ -8,7 +8,9 @@ const getAllCatelogBook = async (req, res) => {
     try {
         let catelogBooks
         if (lat && long) {
-            const result = await Shop.aggregate([
+            // only works with v5 <=
+
+            /*const result = await Shop.aggregate([
                 {
                     '$geoNear': {
                         'near': {
@@ -27,33 +29,71 @@ const getAllCatelogBook = async (req, res) => {
                         'foreignField': '_id',
                         'as': 'books',
                         'pipeline': [
-                            // { $match: {...filter } },
-                            // {
-                            //     '$lookup': {
-                            //         'from': 'shops',
-                            //         'localField': 'shop_id',
-                            //         'foreignField': '_id',
-                            //         'as': 'shop_id',
-                            //         'pipeline': [
-                            //             {
-                            //                 '$project': {
-                            //                     'shop_name': 1
-                            //                 }
-                            //             }
-                            //         ]
-                            //     }
-                            // },
                             {
-                                '$unwind': {
-                                    'path': '$shop_id'
-                                }
-                            }, {
                                 '$lookup': {
                                     'from': 'catelogbookpages',
                                     'localField': 'pages',
                                     'foreignField': '_id',
                                     'as': 'pages',
                                     'pipeline': [
+                                        {
+                                            '$project': {
+                                                'page_image': 1
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }, {
+                    '$project': {
+                        'books': 1,
+                        'shop_name': 1,
+                        'distance': 1
+                    }
+                }
+            ])*/
+
+            // only works with v4 <=
+            const result = await Shop.aggregate([
+                {
+                    '$geoNear': {
+                        'near': {
+                            'type': 'Point',
+                            'coordinates': [
+                                Number(long), Number(lat)
+                            ]
+                        },
+                        'distanceField': 'distance',
+                        'spherical': true
+                    }
+                }, {
+                    '$lookup': {
+                        'from': 'catelogbooks',
+                        'let': { 'catalog_book_ids': "$catelog_books", },
+                        'as': 'books',
+                        'pipeline': [
+                            {
+                                '$match': {
+                                    '$expr': {
+                                        '$in': ["$_id", "$$catalog_book_ids"]
+                                    }
+                                }
+                            },
+                            {
+                                '$lookup': {
+                                    'from': 'catelogbookpages',
+                                    'let': { 'page_ids': "$pages", },
+                                    'as': 'pages',
+                                    'pipeline': [
+                                        {
+                                            '$match': {
+                                                '$expr': {
+                                                    '$in': ["$_id", "$$page_ids"]
+                                                }
+                                            }
+                                        },
                                         {
                                             '$project': {
                                                 'page_image': 1
