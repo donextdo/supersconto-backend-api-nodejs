@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "dev": "nodemon ./bin/www",
+    "db:start": "docker-compose up -d dev-db",
+    "db:stop": "docker-compose rm -f -s -v dev-db"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",

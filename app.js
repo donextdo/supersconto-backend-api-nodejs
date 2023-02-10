@@ -15,8 +15,11 @@ const authRouter = require('./routes/auth-routes/auth-routes');
 const shopRouter = require('./routes/shop')
 const catelogBookRouter = require('./routes/catelog_book')
 const catelogBookPageRouter = require('./routes/catelog_book_page')
-
 const catelogBookItemRouter = require('./routes/catelog_book_page_item')
+const vendorRouter = require('./routes/vendor')
+
+
+
 const app = express();
 
 app.use(cors());
@@ -33,6 +36,7 @@ app.use('/v1/api/shop', shopRouter)
 app.use('/v1/api/catelog/book', catelogBookRouter)
 app.use('/v1/api/catelog/page', catelogBookPageRouter)
 app.use('/v1/api/catelog/item', catelogBookItemRouter)
+app.use('/v1/api/vendor', vendorRouter)
 
 const mongoUri = process.env.MONGO_URI
 
