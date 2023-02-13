@@ -31,7 +31,7 @@ const CustomerSchema = new mongoose.Schema({
 
     userType: {
         type: Number,
-        default: 0
+        default: 2
     },
 
     isVerified: {
@@ -45,6 +45,18 @@ const CustomerSchema = new mongoose.Schema({
     },
 
 }, {timestamps: true})
+
+CustomerSchema.pre('save', async function (next) {
+    if(!this.isModified('password')) {
+        return next()
+    }
+
+    const hash = await bcrypt.hash(this.password, 10)
+
+    this.password = hash
+
+    next()
+})
 
 CustomerSchema.methods.isValidPassword = async function (password) {
     const user = this;

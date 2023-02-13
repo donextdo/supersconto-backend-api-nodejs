@@ -67,7 +67,7 @@ const VendorSchema = new mongoose.Schema({
 
     userType: {
         type: Number,
-        default: 0
+        default: 1
     },
 
     isActive: {
