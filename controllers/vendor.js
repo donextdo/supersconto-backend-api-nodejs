@@ -76,11 +76,20 @@ const updateVendor = async (req, res, next) => {
             })
         }
 
+        const file = req.file
+
+        let profilePic = vendor.profilePic
+
+        if(file) {
+            profilePic = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+        }
+
         const updatedVendor = await Vendor.findByIdAndUpdate(
             id,
             {
                 $set: {
-                    ...req.body
+                    ...req.body,
+                    profilePic
                 }
             },
             {
