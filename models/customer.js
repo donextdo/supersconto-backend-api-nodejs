@@ -1,6 +1,35 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+
+const AddressSchema = new mongoose.Schema({
+    address_line1: {
+        type: String,
+        required: true
+    },
+
+    address_line2: {
+        type: String,
+    },
+
+    address_line3: {
+        type: String,
+    },
+    state: {
+        type: String,
+        required: true
+    },
+    city: {
+        type: String,
+        required: true
+    },
+    postal_code: {
+        type: String,
+        required: true
+    }
+})
+
+
 const CustomerSchema = new mongoose.Schema({
     fullName: {
         type: String,
@@ -27,6 +56,10 @@ const CustomerSchema = new mongoose.Schema({
     phone: {
         type: String,
         required: true,
+    },
+
+    address: {
+        type: AddressSchema
     },
 
     userType: {

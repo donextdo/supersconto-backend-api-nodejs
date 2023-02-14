@@ -18,6 +18,7 @@ const catelogBookPageRouter = require('./routes/catelog_book_page')
 const catelogBookItemRouter = require('./routes/catelog_book_page_item')
 const vendorRouter = require('./routes/vendor')
 const stockRouter = require('./routes/stock')
+const orderRouter = require('./routes/order')
 
 
 const app = express();
@@ -38,6 +39,7 @@ app.use('/v1/api/catelog/page', catelogBookPageRouter)
 app.use('/v1/api/catelog/item', catelogBookItemRouter)
 app.use('/v1/api/vendor', vendorRouter)
 app.use('/v1/api/stock', stockRouter)
+app.use('/v1/api/order', orderRouter)
 
 const mongoUri = process.env.MONGO_URI
 

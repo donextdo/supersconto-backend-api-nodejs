@@ -1,0 +1,145 @@
+{
+	"info": {
+		"_postman_id": "25f1ba76-ea37-4e68-aaf0-f6b9ad77f656",
+		"name": "Order Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"shop\": \"63e9afd871576a1f49033d88\",\n    \"customer\": \"63ea0fbd88d8c668efac0bba\",\n    \"phone\": \"0775843987\",\n    \"billingAddress\": {\n        \"address_line1\": \"Main Street\",\n        \"state\": \"Southern Province\",\n        \"city\": \"Galle\",\n        \"postal_code\": \"89309\"\n    },\n    \"orderItems\": [\n        {\n            \"item_id\": \"63eb4f15dbd89d63ba0fc5ac\",\n            \"qty\": 23\n        },\n        {\n            \"item_id\": \"63eb4fa4dbd89d63ba0fc5de\",\n            \"qty\": 10\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/v1/api/order",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"api",
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all ordrs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/v1/api/order",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"api",
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Orders by shop",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"shop\": \"63e9af6c71576a1f49033d84\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/v1/api/order/by-shop",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"api",
+						"order",
+						"by-shop"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Order Items",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/v1/api/order/order-items",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"api",
+						"order",
+						"order-items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order Items By Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"orderId\": \"63eb6376a108f47850d2e32a\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/v1/api/order/order-items/by-order",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"api",
+						"order",
+						"order-items",
+						"by-order"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
