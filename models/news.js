@@ -30,6 +30,10 @@ const NewsSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    expiredDate: {
+        type: Date,
+        required: true
+    },
     isDelete: {
         type: Boolean,
         default: false

@@ -17,71 +17,125 @@ const getAllNews = async (req, res) => {
 }
 
 const createNews = async (req, res) => {
-    const files = req.files
+    // const files = req.files
 
-    console.log(files)
+    // console.log(files)
 
-    if(files.length < 1) {
-        return res.status(400).send('No Document in request')
+    // if(files.length < 1) {
+    //     return res.status(400).send('No Document in request')
+    // }
+
+    // const basePath = `${req.protocol}://${req.get('host')}/public/images/`
+    // const fileNames = files.map(file => {
+    //     return `${basePath}${file.filename}`
+    // })
+
+    // const {images, ...otherData} = req.body
+
+    // const newNews = new News({...otherData, images: fileNames})
+    const file = req.file
+
+    let img = null
+
+    if(file) {
+        img = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
     }
 
-    const basePath = `${req.protocol}://${req.get('host')}/public/images/`
-    const fileNames = files.map(file => {
-        return `${basePath}${file.filename}`
+    const {images, ...payload} = req.body
+
+    const newNews = new News({
+        ...payload,
+        img
     })
-
-    const {images, ...otherData} = req.body
-
-    const newProduct = new News({...otherData, images: fileNames})
-
     try {
-        const product = await newProduct.save()
-        res.status(200).json(product)
+        const News = await newNews.save()
+        res.status(200).json(News)
     } catch (error) {
         res.status(500).json(error)
     }
 }
 
-const getProduct = async (req, res) => {
+const getNews = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id)
+        const News = await News.findById(req.params.id)
 
-        if(!product) {
-            return res.status(404).json({msg: `No product associate with ${req.params.is}`})
+        if(!News) {
+            return res.status(404).json({msg: `No News associate with ${req.params.is}`})
         }
 
-        res.status(200).json(product)
+        res.status(200).json(News)
     } catch (error) {
         res.status(500).json(error)
     }
 }
 
-const updateProduct = async (req, res) => {
-    try {
-        const product = await Product.findByIdAndUpdate(req.params.id, {
-            $set: req.body
-        },
-        {
-            new: true,
-            runValidators: true
-        })
+const updateNews = async (req, res) => {
+    // try {
+    //     const News = await News.findByIdAndUpdate(req.params.id, {
+    //         $set: req.body
+    //     },
+    //     {
+    //         new: true,
+    //         runValidators: true
+    //     })
 
-        res.status(200).json(product)
-    }catch(error) {
-        res.status(500).json(error)
+    //     res.status(200).json(News)
+    // }catch(error) {
+    //     res.status(500).json(error)
+    // }
+
+    try {
+        const id = req.params.id
+
+        const news = await News.findById(id)
+
+        if(!news) {
+            return res.status(404).json({
+                Success: false,
+                message: `Cannot find news with given id`
+            })
+        }
+
+        const file = req.file
+
+        let images = news.images
+
+        if(file) {
+            profilePic = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+        }
+
+        const updatedNews= await News.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    ...req.body,
+                    images
+                }
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+
+        res.status(200).json(updatedNews)
+
+    }
+    catch (error) {
+        res.status(500).json(error.message)
     }
 }
 
-const deleteProduct = async (req, res) => {
+const deleteNews = async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id)
+        const Newss = await News.findById(req.params.id)
 
-        if(!product) {
+        if(!Newss) {
             return res.status(404).json({msg: `No prodcut with ${req.params.id}`})
         }
 
-        await Product.findByIdAndDelete(req.params.id)
-        res.status(200).json({msg: 'Successfully delete product'})
+        await News.findByIdAndDelete(req.params.id)
+        res.status(200).json({msg: 'Successfully delete News'})
     } catch(error) {
         res.status(500).json(error)
     }
@@ -89,7 +143,7 @@ const deleteProduct = async (req, res) => {
 
 const countDocuments = async (req, res) => {
     try {
-        const count = await Product.countDocuments()
+        const count = await News.countDocuments()
         res.status(200).json(count)
     } catch (error) {
         res.status(500).json(error)
@@ -97,10 +151,9 @@ const countDocuments = async (req, res) => {
 }
 
 module.exports = {
-    getAllProducts,
-    createProduct,
-    getProduct,
-    updateProduct,
-    deleteProduct,
+    getAllNews,
+    createNews,
+    updateNews,
+    deleteNews,
     countDocuments
 }
