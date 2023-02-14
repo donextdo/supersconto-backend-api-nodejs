@@ -41,6 +41,7 @@ const createShop = async (req, res) => {
         res.status(200).json(shop)
 
     } catch (error) {
+        console.log(error)
         res.status(500).json(error)
     }
 }

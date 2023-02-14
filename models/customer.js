@@ -1,6 +1,35 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+
+const AddressSchema = new mongoose.Schema({
+    address_line1: {
+        type: String,
+        required: true
+    },
+
+    address_line2: {
+        type: String,
+    },
+
+    address_line3: {
+        type: String,
+    },
+    state: {
+        type: String,
+        required: true
+    },
+    city: {
+        type: String,
+        required: true
+    },
+    postal_code: {
+        type: String,
+        required: true
+    }
+})
+
+
 const CustomerSchema = new mongoose.Schema({
     fullName: {
         type: String,
@@ -29,9 +58,13 @@ const CustomerSchema = new mongoose.Schema({
         required: true,
     },
 
+    address: {
+        type: AddressSchema
+    },
+
     userType: {
         type: Number,
-        default: 0
+        default: 2
     },
 
     isVerified: {
@@ -45,6 +78,18 @@ const CustomerSchema = new mongoose.Schema({
     },
 
 }, {timestamps: true})
+
+CustomerSchema.pre('save', async function (next) {
+    if(!this.isModified('password')) {
+        return next()
+    }
+
+    const hash = await bcrypt.hash(this.password, 10)
+
+    this.password = hash
+
+    next()
+})
 
 CustomerSchema.methods.isValidPassword = async function (password) {
     const user = this;

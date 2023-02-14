@@ -50,6 +50,10 @@ const CatelogBookPageItemSchema = new mongoose.Schema({
         // required: true
     },
 
+    remaining_qty: {
+        type: Number
+    },
+
     unit_price: {
         type: Number,
         required: true
@@ -80,5 +84,10 @@ const CatelogBookPageItemSchema = new mongoose.Schema({
     }
 
 }, {timestamps: true})
+
+CatelogBookPageItemSchema.pre('save', function (next) {
+    this.remaining_qty = this.quantity
+    next()
+})
 
 module.exports = mongoose.model("CatelogBookPageItem", CatelogBookPageItemSchema);

@@ -49,32 +49,32 @@ passport.use(
                 if (req.body.role === Roles.ADMIN) {
                     user = await AdminModel.findOne({email});
                     if (!user) {
-                        return done(null, false, {message: 'User not found'});
+                        return done(null, false, {message: 'User not found', status: 404});
                     }
 
                 } else if (req.body.role === Roles.VENDOR) {
                     user = await VendorModel.findOne({email})
                     if (!user) {
-                        return done(null, false, {message: 'User not found'});
+                        return done(null, false, {message: 'User not found', status: 404});
                     }
 
                 } else if (req.body.role === Roles.CUSTOMER) {
                     user = await CustomerModel.findOne({email})
                     if (!user) {
-                        return done(null, false, {message: 'User not found'});
+                        return done(null, false, {message: 'User not found', status: 404});
                     }
                 }
                 else {
-                    return done(null, false, {message: 'Invalid user type'});
+                    return done(null, false, {message: 'Invalid user type', status: 400});
                 }
 
                 const validate = await user.isValidPassword(password);
 
                 if (!validate) {
-                    return done(null, false, {message: 'Wrong Password'});
+                    return done(null, false, {message: 'Wrong Password', status: 401});
                 }
 
-                return done(null, user, {message: 'Logged in Successfully'});
+                return done(null, user, {message: 'Logged in Successfully', status: 200});
             } catch (error) {
                 return done(error);
             }

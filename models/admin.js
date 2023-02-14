@@ -46,6 +46,18 @@ const AdminSchema = new mongoose.Schema({
 
 }, {timestamps: true})
 
+AdminSchema.pre('save', async function (next) {
+    if(!this.isModified('password')) {
+        return next()
+    }
+
+    const hash = await bcrypt.hash(this.password, 10)
+
+    this.password = hash
+
+    next()
+})
+
 AdminSchema.methods.isValidPassword = async function (password) {
     const user = this;
     return await bcrypt.compare(password, user.password);
