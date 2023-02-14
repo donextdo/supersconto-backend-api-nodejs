@@ -1,0 +1,240 @@
+{
+	"info": {
+		"_postman_id": "bd2a01f7-22cc-4582-a620-fcf7b9b12cd4",
+		"name": "Supersconto Vendor",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Vendor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "fullName",
+							"value": "Lakshitha Maduranga",
+							"type": "default"
+						},
+						{
+							"key": "username",
+							"value": "lakshitha",
+							"type": "default"
+						},
+						{
+							"key": "email",
+							"value": "lakshitha@gmail.com",
+							"type": "default"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "default"
+						},
+						{
+							"key": "mobile",
+							"value": "0775843987",
+							"type": "default"
+						},
+						{
+							"key": "address[address_line1]",
+							"value": "Galle",
+							"type": "default"
+						},
+						{
+							"key": "address[address_line2]",
+							"value": "galle",
+							"type": "default"
+						},
+						{
+							"key": "address[address_line3]",
+							"value": "galle",
+							"type": "default"
+						},
+						{
+							"key": "address[state]",
+							"value": "sP",
+							"type": "default"
+						},
+						{
+							"key": "address[city]",
+							"value": "galle",
+							"type": "default"
+						},
+						{
+							"key": "address[postal_code]",
+							"value": "20938",
+							"type": "default"
+						},
+						{
+							"key": "profile_pic",
+							"type": "file",
+							"src": "/home/oliver/Documents/Web_Dev/donext-projects/supersconto-website-nextjs/assets/flyers/flyer_7.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/v1/api/vendor",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"api",
+						"vendor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/v1/api/vendor",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"api",
+						"vendor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get By Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/v1/api/vendor/find/63e6075f7e1ceeb433d825cc",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"api",
+						"vendor",
+						"find",
+						"63e6075f7e1ceeb433d825cc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Vendor",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"mobile\": \"00093039033\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/v1/api/vendor/63e6075f7e1ceeb433d825cc",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"api",
+						"vendor",
+						"63e6075f7e1ceeb433d825cc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update profile pic",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "profile_pic",
+							"type": "file",
+							"src": "/home/oliver/Documents/Web_Dev/donext-projects/supersconto-website-nextjs/assets/flyers/flyer_1.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:3000/v1/api/vendor/profile-pic/63e6075f7e1ceeb433d825cc",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"api",
+						"vendor",
+						"profile-pic",
+						"63e6075f7e1ceeb433d825cc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Count Vendors",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/v1/api/vendor/count",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"api",
+						"vendor",
+						"count"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Vendor",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/v1/api/vendor/63e6075f7e1ceeb433d825cc",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"v1",
+						"api",
+						"vendor",
+						"63e6075f7e1ceeb433d825cc"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
