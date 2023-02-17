@@ -70,14 +70,25 @@ const getShop = async (req, res) => {
 
 const updateShop = async (req, res) => {
     try {
-        const shopExist = await Shop.findById(req.params.id)
+        
+        const id = req.params.id
 
-        if (!shopExist) {
-            return res.status(404).json({msg: `No prodcut with ${req.params.id}`})
+        const shop = await Shop.findById(req.params.id)
+
+        if (!shop) {
+            return res.status(404).json({
+                Success:false,
+                message: `Cannot find shop with ${req.params.id}`})
         }
 
-        const updateShop = await Shop.findByIdAndUpdate(req.params.id, {
-                $set: req.body
+        const file = req.file
+
+        let logo_img = shop.logo_img
+
+            const updateShop = await Shop.findByIdAndUpdate(req.params.id, {
+                $set: req.body,
+                logo_img,
+                
             },
             {
                 new: true,
