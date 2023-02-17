@@ -22,6 +22,8 @@ router.get('/find/:id', getShop)
 
 router.post('/', uploadOptions.single('logo_img'), createShop)
 
+router.patch('/:id', uploadOptions.single('logo_img'), updateShop)
+
 router.patch('/:id', updateShop)
 
 router.delete('/:id', deleteShop)
