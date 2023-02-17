@@ -3,8 +3,8 @@ const Shop = require('../models/shop')
 const getAllShops = async (req, res) => {
 
     try {
-
-        let shops = await Shop.find().sort({_id: -1})
+        let shops
+        shops = await Shop.find().sort({_id: -1})
 
         res.status(200).json(shops)
 
@@ -16,6 +16,7 @@ const getAllShops = async (req, res) => {
 }
 
 const createShop = async (req, res) => {
+
 
     const file = req.file
 
@@ -58,7 +59,7 @@ const getShop = async (req, res) => {
         })
 
         if (!shop) {
-            return res.status(404).json({msg: `No product associate with ${req.params.is}`})
+            return res.status(404).json({msg: `No product associate with ${req.params.id}`})
         }
 
         res.status(200).json(shop)
