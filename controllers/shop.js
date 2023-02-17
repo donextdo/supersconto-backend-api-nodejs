@@ -76,7 +76,7 @@ const updateShop = async (req, res) => {
             return res.status(404).json({msg: `No prodcut with ${req.params.id}`})
         }
 
-        const shop = await Shop.findByIdAndUpdate(req.params.id, {
+        const updateShop = await Shop.findByIdAndUpdate(req.params.id, {
                 $set: req.body
             },
             {
@@ -84,7 +84,7 @@ const updateShop = async (req, res) => {
                 runValidators: true
             })
 
-        res.status(200).json(shop)
+        res.status(200).json(updateShop)
     } catch (error) {
         res.status(500).json(error)
     }
