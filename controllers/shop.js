@@ -85,6 +85,10 @@ const updateShop = async (req, res) => {
 
         let logo_img = shop.logo_img
 
+        if(file) {
+            logo_img = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+        }
+
             const updateShop = await Shop.findByIdAndUpdate(req.params.id, {
                 $set: req.body,
                 logo_img,
