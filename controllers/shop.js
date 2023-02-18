@@ -3,8 +3,8 @@ const Shop = require('../models/shop')
 const getAllShops = async (req, res) => {
 
     try {
-
-        let shops = await Shop.find().sort({_id: -1})
+        let shops
+        shops = await Shop.find().sort({_id: -1})
 
         res.status(200).json(shops)
 
@@ -16,6 +16,7 @@ const getAllShops = async (req, res) => {
 }
 
 const createShop = async (req, res) => {
+
 
     const file = req.file
 
@@ -58,7 +59,7 @@ const getShop = async (req, res) => {
         })
 
         if (!shop) {
-            return res.status(404).json({msg: `No product associate with ${req.params.is}`})
+            return res.status(404).json({msg: `No product associate with ${req.params.id}`})
         }
 
         res.status(200).json(shop)
@@ -69,21 +70,36 @@ const getShop = async (req, res) => {
 
 const updateShop = async (req, res) => {
     try {
-        const shopExist = await Shop.findById(req.params.id)
+        
+        const id = req.params.id
 
-        if (!shopExist) {
-            return res.status(404).json({msg: `No prodcut with ${req.params.id}`})
+        const shop = await Shop.findById(req.params.id)
+
+        if (!shop) {
+            return res.status(404).json({
+                Success:false,
+                message: `Cannot find shop with ${req.params.id}`})
         }
 
-        const shop = await Shop.findByIdAndUpdate(req.params.id, {
-                $set: req.body
+        const file = req.file
+
+        let logo_img = shop.logo_img
+
+        if(file) {
+            logo_img = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+        }
+
+            const updateShop = await Shop.findByIdAndUpdate(req.params.id, {
+                $set: req.body,
+                logo_img,
+                
             },
             {
                 new: true,
                 runValidators: true
             })
 
-        res.status(200).json(shop)
+        res.status(200).json(updateShop)
     } catch (error) {
         res.status(500).json(error)
     }
