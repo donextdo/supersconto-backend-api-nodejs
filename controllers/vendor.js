@@ -41,7 +41,7 @@ const createVendor = async (req, res, next) => {
         let profilePic = null
 
         if(file) {
-            profilePic = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+            profilePic = `${process.env.IMG_SERVER}/public/images/${file.filename}`
         }
     
         const {profile_pic, ...payload} = req.body
@@ -81,7 +81,7 @@ const updateVendor = async (req, res, next) => {
         let profilePic = vendor.profilePic
 
         if(file) {
-            profilePic = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+            profilePic = `${process.env.IMG_SERVER}/public/images/${file.filename}`
         }
 
         const updatedVendor = await Vendor.findByIdAndUpdate(
@@ -129,7 +129,7 @@ const updateProfilePic = async (req, res, next) => {
             })
         }
 
-        const profilePic = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+        const profilePic = `${process.env.IMG_SERVER}/public/images/${file.filename}`
 
         const updatedVendor = await Vendor.findByIdAndUpdate(
             id,

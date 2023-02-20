@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www",
+    "start": "set NODE_ENV=production && node ./bin/www",
+    "dev": "set NODE_ENV=development && nodemon ./bin/www",
     "db:start": "docker-compose up -d dev-db",
     "db:stop": "docker-compose rm -f -s -v dev-db"
   },

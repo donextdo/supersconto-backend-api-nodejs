@@ -47,7 +47,7 @@ const createCatelogBookPageItem = async (req, res) => {
         return res.status(400).send('No Item Image in request')
     }
 
-    const imgPath = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+    const imgPath = `${process.env.IMG_SERVER}/public/images/${file.filename}`
     const {product_image, data} = req.body
     const payload = JSON.parse(data)
     const newCatelogBookPageItem = new CatelogBookPageItem({ ...payload, product_image: imgPath })

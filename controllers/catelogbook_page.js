@@ -9,7 +9,7 @@ const createCatelogBookPages = async (req, res) => {
         return res.status(400).send('No Page Image in request')
     }
 
-    const imgPath = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+    const imgPath = `${process.env.IMG_SERVER}/public/images/${file.filename}`
     const {page_image, ...payload} = req.body
     const newCatelogBookPage = new CatelogBookPage({ ...payload, page_image: imgPath })
 
