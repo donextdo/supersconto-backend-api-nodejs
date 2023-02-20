@@ -6,7 +6,13 @@ const cors = require("cors");
 const mongoose = require("mongoose")
 mongoose.set('debug', true);
 
-require("dotenv").config()
+dotenv = require("dotenv")
+console.log({env: process.env.NODE_ENV})
+if (process.env.NODE_ENV === 'production') {
+    dotenv.config({ path: '.env.production' });
+} else {
+    dotenv.config({ path: '.env.development' });
+}
 const passport = require('passport');
 require('./config/auth/auth');
 

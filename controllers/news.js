@@ -25,7 +25,7 @@ const createNews = async (req, res) => {
     //     return res.status(400).send('No Document in request')
     // }
 
-    // const basePath = `${req.protocol}://${req.get('host')}/public/images/`
+    // const basePath = `${process.env.IMG_SERVER}/public/images/`
     // const fileNames = files.map(file => {
     //     return `${basePath}${file.filename}`
     // })
@@ -38,7 +38,7 @@ const createNews = async (req, res) => {
     let img = null
 
     if(file) {
-        img = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+        img = `${process.env.IMG_SERVER}/public/images/${file.filename}`
     }
 
     const {images, ...payload} = req.body
@@ -101,7 +101,7 @@ const updateNews = async (req, res) => {
         let images = news.images
 
         if(file) {
-            profilePic = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+            profilePic = `${process.env.IMG_SERVER}/public/images/${file.filename}`
         }
 
         const updatedNews= await News.findByIdAndUpdate(

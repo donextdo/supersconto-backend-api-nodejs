@@ -24,7 +24,7 @@ const createShop = async (req, res) => {
         return res.status(400).send('No Logo Image in request')
     }
 
-    const imgPath = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+    const imgPath = `${process.env.IMG_SERVER}/public/images/${file.filename}`
 
     const {logo_img, ...payload} = req.body
 
@@ -86,7 +86,7 @@ const updateShop = async (req, res) => {
         let logo_img = shop.logo_img
 
         if(file) {
-            logo_img = `${req.protocol}://${req.get('host')}/public/images/${file.filename}`
+            logo_img = `${process.env.IMG_SERVER}/public/images/${file.filename}`
         }
 
             const updateShop = await Shop.findByIdAndUpdate(req.params.id, {

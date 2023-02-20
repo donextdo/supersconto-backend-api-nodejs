@@ -32,7 +32,7 @@ const createProduct = async (req, res) => {
         return res.status(400).send('No Document in request')
     }
 
-    const basePath = `${req.protocol}://${req.get('host')}/public/images/`
+    const basePath = `${process.env.IMG_SERVER}/public/images/`
     const fileNames = files.map(file => {
         return `${basePath}${file.filename}`
     })
