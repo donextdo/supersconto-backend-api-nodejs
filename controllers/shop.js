@@ -3,8 +3,8 @@ const Shop = require('../models/shop')
 const getAllShops = async (req, res) => {
 
     try {
-        let shops
-        shops = await Shop.find().sort({_id: -1})
+
+        let shops = await Shop.find().sort({_id: -1})
 
         res.status(200).json(shops)
 
@@ -70,38 +70,44 @@ const getShop = async (req, res) => {
 
 const updateShop = async (req, res) => {
     try {
-        
         const id = req.params.id
 
-        const shop = await Shop.findById(req.params.id)
+        const sshop = await Shop.findById(id)
 
-        if (!shop) {
+        if(!sshop) {
             return res.status(404).json({
-                Success:false,
-                message: `Cannot find shop with ${req.params.id}`})
+                Success: false,
+                message: `Cannot find shop with given id`
+            })
         }
 
         const file = req.file
 
-        let logo_img = shop.logo_img
+        let logo_img = Shop.logo_img
 
         if(file) {
             logo_img = `${process.env.IMG_SERVER}/public/images/${file.filename}`
         }
 
-            const updateShop = await Shop.findByIdAndUpdate(req.params.id, {
-                $set: req.body,
-                logo_img,
-                
+        const updatedShop = await Shop.findByIdAndUpdate(
+            id,
+            {
+                $set: {
+                    ...req.body,
+                    logo_img
+                }
             },
             {
                 new: true,
                 runValidators: true
-            })
+            }
+        )
 
-        res.status(200).json(updateShop)
-    } catch (error) {
-        res.status(500).json(error)
+        res.status(200).json(updatedShop)
+
+    }
+    catch (error) {
+        res.status(500).json(error.message)
     }
 }
 
