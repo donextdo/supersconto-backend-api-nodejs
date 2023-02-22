@@ -38,7 +38,6 @@ app.use('/v1/api/catelog/page', catelogBookPageRouter)
 app.use('/v1/api/catelog/item', catelogBookItemRouter)
 app.use('/v1/api/vendor', vendorRouter)
 app.use('/v1/api/stock', stockRouter)
-
 const mongoUri = process.env.MONGO_URI
 
 mongoose.set('strictQuery', false)
