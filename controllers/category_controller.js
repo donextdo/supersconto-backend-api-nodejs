@@ -48,8 +48,75 @@ const createSubCategory = async (req, res) => {
 
 
 
+
+ const getAllMainCategories = async (req, res) => {
+  try {
+    const mainCategories = await MainCategory.find();
+    res.status(200).json(mainCategories);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const getMainCategoryById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const mainCategory = await MainCategory.findById(id);
+    if (!mainCategory) {
+      return res.status(404).json({ message: 'Main category not found' });
+    }
+    res.status(200).json(mainCategory);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+const updateMainCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    const mainCategory = await MainCategory.findByIdAndUpdate(
+      id,
+      { name },
+      { new: true }
+    );
+    if (!mainCategory) {
+      return res.status(404).json({ message: 'Main category not found' });
+    }
+    res.status(200).json(mainCategory);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+const deleteMainCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const mainCategory = await MainCategory.findByIdAndDelete(id);
+    if (!mainCategory) {
+      return res.status(404).json({ message: 'Main category not found' });
+    }
+    // Delete all sub-categories associated with the main category
+    await SubCategory.deleteMany({ mainCategoryId: id });
+    res.status(200).json({ message: 'Main category deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+
 module.exports = {
   createMainCategory,
-  createSubCategory
+  createSubCategory,
+  getAllMainCategories,
+  getMainCategoryById,
+  updateMainCategory,
+  deleteMainCategory,
 }
  
