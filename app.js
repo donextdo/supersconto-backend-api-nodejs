@@ -49,7 +49,7 @@ app.use('/v1/api/vendor', vendorRouter)
 app.use('/v1/api/stock', stockRouter)
 app.use('/v1/api/order', orderRouter)
 app.use('/v1/api/news', newsRouter)
-app.use('/api', categoryRoutes);
+app.use('/v1/api/category', categoryRoutes);
 
 const mongoUri = process.env.MONGO_URI
 

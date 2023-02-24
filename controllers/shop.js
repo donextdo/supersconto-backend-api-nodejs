@@ -19,12 +19,15 @@ const createShop = async (req, res) => {
 
 
     const file = req.file
+    const imgPath=null
+    // if (!file) {
+    //     return res.status(400).send('No Logo Image in request')
+    // }
+    if(file)
+    {
+         imgPath = `${process.env.IMG_SERVER}/public/images/${file.filename}`
 
-    if (!file) {
-        return res.status(400).send('No Logo Image in request')
     }
-
-    const imgPath = `${process.env.IMG_SERVER}/public/images/${file.filename}`
 
     const {logo_img, ...payload} = req.body
 
@@ -80,7 +83,7 @@ const updateShop = async (req, res) => {
                 message: `Cannot find shop with given id`
             })
         }
-
+        
         const file = req.file
 
         let logo_img = Shop.logo_img
@@ -88,7 +91,7 @@ const updateShop = async (req, res) => {
         if(file) {
             logo_img = `${process.env.IMG_SERVER}/public/images/${file.filename}`
         }
-
+        
         const updatedShop = await Shop.findByIdAndUpdate(
             id,
             {
