@@ -1,7 +1,8 @@
-const MainCategory = require('../models/MainCategory');
-const SubCategory = require('../models/SubCategory');
+const MainCategory = require('../models/maincategory');
+const SubCategory = require('../models/subcategory');
 
- const createMainCategory = async (req, res) => {
+
+const createMainCategory = async (req, res) => {
   try {
     const { name } = req.body;
     const mainCategory = new MainCategory({ name });
@@ -46,10 +47,7 @@ const createSubCategory = async (req, res) => {
   }
 };
 
-
-
-
- const getAllMainCategories = async (req, res) => {
+const getAllMainCategories = async (req, res) => {
   try {
     const mainCategories = await MainCategory.find();
     res.status(200).json(mainCategories);
