@@ -47,10 +47,11 @@ const createSubCategory = async (req, res) => {
   }
 };
 
-const getAllMainCategories = async (req, res) => {
+const getAllCategories = async (req, res) => {
   try {
+    const subCategories = await SubCategory.find();
     const mainCategories = await MainCategory.find();
-    res.status(200).json(mainCategories);
+    res.status(200).json({'mainCategories':mainCategories,'subCategories':subCategories});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
@@ -112,7 +113,7 @@ const deleteMainCategory = async (req, res) => {
 module.exports = {
   createMainCategory,
   createSubCategory,
-  getAllMainCategories,
+  getAllCategories,
   getMainCategoryById,
   updateMainCategory,
   deleteMainCategory,
