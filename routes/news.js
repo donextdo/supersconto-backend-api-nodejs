@@ -4,6 +4,7 @@ const storage = require('../middleware/multerStorage')
 
 const { 
     getAllNews,
+    getNews,
     createNews,
     updateNews,
     deleteNews,
@@ -16,11 +17,12 @@ const router = express.Router()
 
 router.get('/', getAllNews)
 
+router.get('/find/:id', getNews)
+
 router.post('/', uploadOptions.single('images'), createNews)
 
 router.patch('/:id', uploadOptions.single('images'), updateNews)
 
 router.delete('/:id', deleteNews)
 
-
-module.exports = router
+module.exports = router;

@@ -13,6 +13,7 @@ const getAllShops = async (req, res) => {
         res.status(500).json(error)
 
     }
+    
 }
 
 const createShop = async (req, res) => {
@@ -62,7 +63,7 @@ const getShop = async (req, res) => {
         })
 
         if (!shop) {
-            return res.status(404).json({msg: `No product associate with ${req.params.id}`})
+            return res.status(404).json({msg: `No Shop associate with ${req.params.id}`})
         }
 
         res.status(200).json(shop)
@@ -115,6 +116,7 @@ const updateShop = async (req, res) => {
 }
 
 const deleteShop = async (req, res) => {
+
     try {
         const shop = await Shop.findById(req.params.id)
 

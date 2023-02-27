@@ -152,6 +152,7 @@ const countDocuments = async (req, res) => {
 
 module.exports = {
     getAllNews,
+    getNews,
     createNews,
     updateNews,
     deleteNews,
