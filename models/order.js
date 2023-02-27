@@ -28,15 +28,14 @@ const AddressSchema = new mongoose.Schema({
 })
 
 const OrderSchema = new mongoose.Schema({
-    shop: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Shop',
-        required: true
-    },
-
     customer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Customer',
+        // required: true
+    },
+
+    full_name: {
+        type: String,
         required: true
     },
 
@@ -49,12 +48,12 @@ const OrderSchema = new mongoose.Schema({
         required: true
     },
 
-    orderItems: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'OrderItem'
-        }
-    ],
+    // orderItems: [
+    //     {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'OrderItem'
+    //     }
+    // ],
 
     totalPrice: {
         type: Number,
