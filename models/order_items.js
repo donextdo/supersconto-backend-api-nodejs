@@ -7,6 +7,11 @@ const orderItemsSchema = new mongoose.Schema({
         ref: 'Order',
         required: true
     },
+    shopId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Shop',
+        required: true
+    },
     product: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'CatelogBookPageItem',
@@ -23,14 +28,14 @@ const orderItemsSchema = new mongoose.Schema({
     }
 })
 
-orderItemsSchema.post('save', async (doc) => {
-    await Order.findOneAndUpdate({
-        _id: doc.orderId
-    },
-    {
-        $push: {orderItems: doc._id}
-    })
-})
+// orderItemsSchema.post('save', async (doc) => {
+//     await Order.findOneAndUpdate({
+//         _id: doc.orderId
+//     },
+//     {
+//         $push: {orderItems: doc._id}
+//     })
+// })
 
 
 module.exports = mongoose.model("OrderItem", orderItemsSchema);

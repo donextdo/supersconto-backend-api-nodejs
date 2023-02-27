@@ -22,22 +22,9 @@ const createSubCategory = async (req, res) => {
       const existingMainCategory = await MainCategory.findOne({ name: mainCategoryName });
       if (existingMainCategory) {
         mainCategoryId = existingMainCategory._id;
-      } else {
-        const newMainCategory = new MainCategory({ name: mainCategoryName });
-        const savedMainCategory = await newMainCategory.save();
-        mainCategoryId = savedMainCategory._id;
-      }
-    } else {
-      const existingSubCategory = await SubCategory.findOne({ name });
-      if (existingSubCategory) {
-        mainCategoryId = existingSubCategory._id;
-      } else {
-        const newSubCategory = new SubCategory({ name });
-        const savedSubCategory = await newSubCategory.save();
-        mainCategoryId = savedSubCategory._id;
-      }
-    }
-    
+      } 
+  
+    }    
     const subCategory = new SubCategory({ name, mainCategoryId });
     await subCategory.save();
     res.status(201).json(subCategory);
@@ -73,40 +60,93 @@ const getMainCategoryById = async (req, res) => {
 };
 
 
-const updateMainCategory = async (req, res) => {
+
+
+const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
     const { name } = req.body;
-    const mainCategory = await MainCategory.findByIdAndUpdate(
-      id,
-      { name },
-      { new: true }
-    );
-    if (!mainCategory) {
-      return res.status(404).json({ message: 'Main category not found' });
+    
+    // Check if category with given id exists
+    let category = await MainCategory.findById(id);
+    if (!category) {
+      category = await SubCategory.findById(id);
+      if (!category) {
+        return res.status(404).json({ message: 'Category not found' });
+      }
     }
-    res.status(200).json(mainCategory);
+    
+    // Update name and save category
+    category.name = name;
+    await category.save();
+    
+    res.status(200).json(category);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-const deleteMainCategory = async (req, res) => {
+
+const deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const mainCategory = await MainCategory.findByIdAndDelete(id);
-    if (!mainCategory) {
-      return res.status(404).json({ message: 'Main category not found' });
+    
+    // Check if category with given id exists
+    let category = await MainCategory.findById(id);
+    if (!category) {
+      category = await SubCategory.findById(id);
+      if (!category) {
+        return res.status(404).json({ message: 'Category not found' });
+      }
     }
-    // Delete all sub-categories associated with the main category
-    await SubCategory.deleteMany({ mainCategoryId: id });
-    res.status(200).json({ message: 'Main category deleted successfully' });
+    
+    // Delete category
+    await category.remove();
+    
+    res.status(200).json({ message: 'Category deleted successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+
+// const updateMainCategory = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { name } = req.body;
+//     const mainCategory = await MainCategory.findByIdAndUpdate(
+//       id,
+//       { name },
+//       { new: true }
+//     );
+//     if (!mainCategory) {
+//       return res.status(404).json({ message: 'Main category not found' });
+//     }
+//     res.status(200).json(mainCategory);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
+
+// const deleteMainCategory = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const mainCategory = await MainCategory.findByIdAndDelete(id);
+//     if (!mainCategory) {
+//       return res.status(404).json({ message: 'Main category not found' });
+//     }
+//     // Delete all sub-categories associated with the main category
+//     await SubCategory.deleteMany({ mainCategoryId: id });
+//     res.status(200).json({ message: 'Main category deleted successfully' });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
 
 
 
@@ -115,7 +155,7 @@ module.exports = {
   createSubCategory,
   getAllCategories,
   getMainCategoryById,
-  updateMainCategory,
-  deleteMainCategory,
+  updateCategory,
+  deleteCategory,
 }
  
