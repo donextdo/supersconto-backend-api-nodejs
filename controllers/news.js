@@ -18,7 +18,6 @@ const getAllNews = async (req, res) => {
 
 const createNews = async (req, res) => {
     // const files = req.files
-
     // console.log(files)
 
     // if(files.length < 1) {

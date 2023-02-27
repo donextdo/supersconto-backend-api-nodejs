@@ -120,29 +120,6 @@ const getAllOrders = async (req, res, next) => {
 }
 
 
-const getOrdersByShop = async (req, res, next) => {
-    try {
-        const shop = req.body.shop
-
-        const orders = await Order.find({
-            shop
-        }).populate({
-            path: 'shop',
-            select: ['shop_name', 'address']
-        })
-        .populate({
-            path: 'customer',
-            select: ['fullName']
-        })
-
-        res.status(200).json(orders)
-    }
-    catch (error) {
-        res.status(500).json(error.message)
-    }
-}
-
-
 const getAllOrderItems = async (req, res, next) => {
     try {
         const orderItems = await OrderItem.find().populate({
@@ -176,10 +153,57 @@ const getOrderItemsByOrder = async (req, res, next) => {
     }
 }
 
+const getOrdersByShop = async (req, res, next) => {
+    try {
+        const shopId = req.params.shopId;
+
+        const orders = await Order.find({
+            shop: shopId
+        }).populate({
+            path: 'shop',
+            select: ['shop_name', 'address']
+        })
+        .populate({
+            path: 'customer',
+            select: ['fullName']
+        });
+
+        res.status(200).json(orders);
+    }
+    catch (error) {
+        res.status(500).json(error.message);
+    }
+}
+
+
+//Added for Filter shopId from orderId
+const getOrdersByShopId = async (req, res, next) => {
+    try {
+        const shopId = req.params.shopId;
+
+        const orders = await Order.find({
+            shop: shopId
+        }).populate({
+            path: 'shop',
+            select: ['shop_name', 'address']
+        })
+        // .populate({
+        //     path: 'customer',
+        //     select: ['fullName']
+        // })
+       
+        res.status(200).json(orders)
+    }
+    catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
 module.exports = {
     createOrder,
     getAllOrders,
     getOrdersByShop,
     getAllOrderItems,
-    getOrderItemsByOrder
+    getOrderItemsByOrder,
+    getOrdersByShopId
 }
