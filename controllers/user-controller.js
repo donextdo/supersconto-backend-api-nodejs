@@ -63,33 +63,35 @@ const login = async (req, res) => {
 
   const validPassword = await bcrypt.compare(password, user.password);
   if (!validPassword) {
-    return res.status(400).send('Invalid email or password.');
+    return res.status(400).send('Invalid email or password .');
   }
 
   const token = auth.sign({ _id: id }, 'myprivatekey');
 
-  res.send(`logging success your token is : ${token}`);
-}
-//     const user = await User.findOne({ email });
+  // res.send(`  ${token}`);
+  res.status(200).send({ ...user.toJSON(), token });
 
-//     if (user) {
-//       if (user && bcrypt.compareSync(password, user.password)) {
-//         const token = auth.generateAccessToken(email);
-//         return res.status(200).send({ ...user.toJSON(), token });
-//       } else {
-//         return res.status(400).send({
-//           message: "Such user does not exist check your credentials ",
-//         });
-//       }
-//     } else {
-//       return res.status(404).send({ message: "Such user does not exist" });
-//     }
-//   } catch (err) {
-//     return res
-//       .status(400)
-//       .send({ message: "Such user does not exist check your credentials" });
-//   }
-// };
+  // try{
+  //   const user = await User.findOne({ email:email });
+  //   console.log(user)
+  //   if (user) {
+  //     if (user ) {
+  //       // const token = auth.generateAccessToken(email);
+  //       return res.status(200).send({ ...user.toJSON(), TOKEN_SECRET });
+  //     } else {
+  //       return res.status(400).send({
+  //         message: "Such user does not exist check your credentials ",
+  //       });
+  //     }
+  //   } else {
+  //     return res.status(404).send({ message: "Such user does not exist" });
+  //   }
+  // } catch (err) {
+  //   return res
+  //     .status(400)
+  //     .send({ message: "Such user does not exist check your credentialsadadada" });
+  // }
+};
 
 const getAllUsers = async (req, res) => {
   try {
