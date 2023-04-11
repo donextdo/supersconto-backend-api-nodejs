@@ -1,0 +1,25 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Deploy to VPS
+      uses: easingthemes/ssh-deploy@v2.1.6
+      with:
+        command: 'cd /path/to/app && npm install && pm2 restart app.js'
+        ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        ssh_user: 'your-ssh-username'
+        ssh_host: 'your-ssh-hostname'
