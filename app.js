@@ -29,6 +29,11 @@ const newsRouter = require('./routes/news')
 const categoryRoutes = require('./routes/category-route');
 const searchRouter = require('./routes/search.route')
 const userAuth = require('./routes/user')
+const product = require('./routes/product')
+const neworder = require('./routes/neworder')
+
+
+
 
 
 const app = express();
@@ -54,6 +59,10 @@ app.use('/v1/api/news', newsRouter)
 app.use('/v1/api/category', categoryRoutes);
 app.use('/v1/api/search', searchRouter)
 app.use('/v1/api/users', userAuth)
+app.use('/v1/api/product', product)
+app.use('/v1/api/neworder', neworder)
+
+
 
 const mongoUri = process.env.MONGO_URI
 

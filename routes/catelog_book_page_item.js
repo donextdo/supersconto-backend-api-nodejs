@@ -23,6 +23,8 @@ router.get('/find/:id', getCatelogBookPageItem)
 router.post('/find-list', getCatelogBookPageItemByIds)
 
 router.post('/', uploadOptions.single('product_image'), createCatelogBookPageItem)
+// router.post('/', createCatelogBookPageItem)
+
 
 router.patch('/:id', updateCatelogBookPageItem)
 

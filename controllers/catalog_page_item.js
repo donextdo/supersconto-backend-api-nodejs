@@ -43,18 +43,20 @@ const createCatelogBookPageItem = async (req, res) => {
 
     const file = req.file
 
-    if(!file) {
-        return res.status(400).send('No Item Image in request')
-    }
+    // if(!file) {
+    //     return res.status(400).send('No Item Image in request')
+    // }
 
-    const imgPath = `${process.env.IMG_SERVER}/public/images/${file.filename}`
-    const {product_image, data} = req.body
+    // const imgPath = `${process.env.IMG_SERVER}/public/images/${file.filename}`
+    const { data} = req.body
     const payload = JSON.parse(data)
-    const newCatelogBookPageItem = new CatelogBookPageItem({ ...payload, product_image: imgPath })
+    
+    const newCatelogBookPageItem = new CatelogBookPageItem({ ...payload })
 
     try {
 
         const CatelogBookPageItem = await newCatelogBookPageItem.save()
+        console.log(CatelogBookPageItem)
 
         await CatelogBookPage.findByIdAndUpdate(
             payload.catelog_page_id,
@@ -67,7 +69,9 @@ const createCatelogBookPageItem = async (req, res) => {
         res.status(200).json( CatelogBookPageItem )
 
     } catch (error) {
+        console.log(error)
         res.status(500).json(error)
+
     }
 }
 
