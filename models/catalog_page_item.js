@@ -2,22 +2,22 @@ const mongoose = require('mongoose');
 
 const CatelogBookPageItemSchema = new mongoose.Schema({
     
-    shop_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Shop',
-        required: true
-    },
+    // shop_id: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Shop',
+    //     // required: true
+    // },
     
-    catelog_book_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'CatelogBook',
-        required: true
-    },
+    // catelog_book_id: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'CatelogBook',
+    //     // required: true
+    // },
 
     catelog_page_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'CatelogBookPage',
-        required: true
+        type: String,
+        // ref: 'CatelogBookPage',
+        // required: true
     },
 
     product_name: {
@@ -27,7 +27,7 @@ const CatelogBookPageItemSchema = new mongoose.Schema({
 
     product_category: {
         type: String,
-        // required: true
+       
     },
     
     product_description: {
@@ -37,17 +37,17 @@ const CatelogBookPageItemSchema = new mongoose.Schema({
 
     item_index: {
         type: Number,
-        // required: true
+        
     },
 
     crop_id: {
         type: Number,
-        // required: true
+        
     },
 
     quantity: {
         type: Number,
-        // required: true
+        
     },
 
     remaining_qty: {
@@ -56,12 +56,12 @@ const CatelogBookPageItemSchema = new mongoose.Schema({
 
     unit_price: {
         type: Number,
-        required: true
+        // required: true
     },
 
     product_image: { //croped image
         type: String,
-        required: true
+        // required: true
     },
 
     isOnlineSale_available: { 

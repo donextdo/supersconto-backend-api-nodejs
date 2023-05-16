@@ -35,7 +35,86 @@ const ProductSchema = new mongoose.Schema({
     availability: {
         type: Boolean,
         default: true
-    }
+    },
+    brand: {
+        type: String,
+      },
+      description: {
+        type: String,
+        required: true,
+      },
+    
+      front: {
+        type: String,
+      },
+      side: {
+        type: String,
+      },
+      back: {
+        type: String,
+      },
+      category: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Category",
+        },
+      ],
+      isAvailable: {
+        type: Boolean,
+        
+      },
+      skuNumber: {
+        type: String,
+        
+      },
+      type: {
+        type: String,
+       
+      },
+      mfgDate: {
+        type: String,
+       
+      },
+      expDate: {
+        type: String,
+       
+      },
+      discount: {
+        type: Number,
+      },
+      review: {
+        type: Number,
+      },
+    
+      soldCount: {
+        type: Number,
+      },
+    
+      popularity: {
+        type: Number,
+      },
+    
+      averageRating: {},
+    
+      additionalInformation: [],
+    
+      tags: [],
+    
+      updatedAt: {
+        type: Date,
+        default: null,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+      deletedAt: {
+        type: Date,
+        default: null,
+      },
+      life: {
+        type: String,
+      },
 }, {timestamps: true})
 
 module.exports = mongoose.model("Product", ProductSchema);
