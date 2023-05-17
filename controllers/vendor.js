@@ -8,7 +8,7 @@ const getAllVendors = async (req, res, next) => {
         res.status(200).json(vendors)
     }
     catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
@@ -29,7 +29,7 @@ const getVendorById = async (req, res, next) => {
         res.status(200).json(vendor)
     }
     catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
@@ -58,7 +58,7 @@ const createVendor = async (req, res, next) => {
         res.status(201).json(vendorInfo)
     }
     catch(error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
@@ -102,7 +102,7 @@ const updateVendor = async (req, res, next) => {
 
     }
     catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
@@ -149,7 +149,7 @@ const updateProfilePic = async (req, res, next) => {
 
     }
     catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
@@ -175,7 +175,7 @@ const deleteVendor = async (req, res, next) => {
         })
     }
     catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
