@@ -11,7 +11,7 @@ const getAllStocks = async (req, res, next) => {
         res.status(200).json(stocks)
     }
     catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
@@ -30,7 +30,7 @@ const filterByShop = async (req, res, next) => {
         res.status(200).json(stocks)
     }
     catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
@@ -47,7 +47,7 @@ const filterByCity = async (req, res, next) => {
         res.status(200).json(stocks)
     }
     catch(error) {
-        res.status(500).json(error.message)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 

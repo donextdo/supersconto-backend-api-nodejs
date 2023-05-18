@@ -1,17 +1,17 @@
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
 const cors = require("cors");
-const mongoose = require("mongoose")
-mongoose.set('debug', true);
+const mongoose = require("mongoose");
+mongoose.set("debug", true);
 
-dotenv = require("dotenv")
-console.log({env: process.env.NODE_ENV})
-if (process.env.NODE_ENV === 'production') {
-    dotenv.config({ path: '.env.production' });
+dotenv = require("dotenv");
+console.log({ env: process.env.NODE_ENV });
+if (process.env.NODE_ENV === "production") {
+  dotenv.config({ path: ".env.production" });
 } else {
-    dotenv.config({ path: '.env.development' });
+  dotenv.config({ path: ".env.development" });
 }
 const passport = require('passport');
 require('./config/auth/auth');
@@ -32,19 +32,15 @@ const userAuth = require('./routes/user')
 const product = require('./routes/product')
 const neworder = require('./routes/neworder')
 
-
-
-
-
 const app = express();
 
 app.use(cors());
-app.use(logger('dev'));
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/public', express.static(__dirname + '/public'))
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/public", express.static(__dirname + "/public"));
 
 app.use('/v1/api', indexRouter);
 app.use('/v1/api/auth', authRouter)
@@ -64,15 +60,16 @@ app.use('/v1/api/neworder', neworder)
 
 
 
-const mongoUri = process.env.MONGO_URI
+const mongoUri = process.env.MONGO_URI;
 
-mongoose.set('strictQuery', false)
-mongoose.connect(mongoUri)
-    .then(() => {
-        console.log("DB connection is ready")
-    })
-    .catch(err => {
-        throw err
-    })
+mongoose.set("strictQuery", false);
+mongoose
+  .connect(mongoUri)
+  .then(() => {
+    console.log("DB connection is ready");
+  })
+  .catch((err) => {
+    throw err;
+  });
 
 module.exports = app;

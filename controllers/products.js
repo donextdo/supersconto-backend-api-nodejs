@@ -20,7 +20,7 @@ const getAllProducts = async (req, res) => {
         
         res.status(200).json(products)
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
@@ -46,7 +46,7 @@ const createProduct = async (req, res) => {
         const product = await newProduct.save()
         res.status(200).json(product)
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
@@ -60,7 +60,7 @@ const getProduct = async (req, res) => {
 
         res.status(200).json(product)
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
@@ -76,7 +76,7 @@ const updateProduct = async (req, res) => {
 
         res.status(200).json(product)
     }catch(error) {
-        res.status(500).json(error)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
@@ -91,7 +91,7 @@ const deleteProduct = async (req, res) => {
         await Product.findByIdAndDelete(req.params.id)
         res.status(200).json({msg: 'Successfully delete product'})
     } catch(error) {
-        res.status(500).json(error)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
@@ -100,7 +100,7 @@ const countDocuments = async (req, res) => {
         const count = await Product.countDocuments()
         res.status(200).json(count)
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json({ message: "Internal Server error" });
     }
 }
 
