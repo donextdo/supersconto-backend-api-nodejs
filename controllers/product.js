@@ -28,6 +28,11 @@ const addProduct = async (req, res) => {
   const additionalInformation = req.body.additionalInformation;
   const tags = req.body.tags;
   const life = req.body.life;
+  const product_name = req.body.product_name;
+  const product_category = req.body.product_category;
+  const product_description = req.body.product_description;
+  const unit_price = req.body.unit_price;
+  const product_image = req.body.product_image;
   const createdAt = new Date();
   const updatedAt = null;
   const deletedAt = null;
@@ -59,6 +64,11 @@ const addProduct = async (req, res) => {
     deletedAt,
     life,
     tags,
+    product_name,
+    product_category,
+    product_description,
+    unit_price,
+    product_image,
     // isFavourite,
   });
   try {

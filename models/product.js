@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const ProductSchema = new Schema({
   title: {
     type: String,
-    required: true,
+    // required: true,
     // unique: true,
   },
   brand: {
@@ -12,7 +12,7 @@ const ProductSchema = new Schema({
   },
   description: {
     type: String,
-    required: true,
+    // required: true,
   },
 
   front: {
@@ -24,39 +24,40 @@ const ProductSchema = new Schema({
   back: {
     type: String,
   },
-  category: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-    },
-  ],
+  // category: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: "Category",
+  //   },
+  // ],
   quantity: {
     type: Number,
-    required: true,
+    // required: true,
   },
+
   price: {
     type: Number,
-    required: true,
+    // required: true,
   },
   isAvailable: {
     type: Boolean,
-    required: true,
+    // required: true,
   },
   skuNumber: {
     type: String,
-    required: true,
+    // required: true,
   },
   type: {
     type: String,
-    required: true,
+    // required: true,
   },
   mfgDate: {
     type: String,
-    required: true,
+    // required: true,
   },
   expDate: {
     type: String,
-    required: true,
+    // required: true,
   },
   discount: {
     type: Number,
@@ -93,6 +94,28 @@ const ProductSchema = new Schema({
   },
   life: {
     type: String,
+  },
+  product_name: {
+    type: String,
+    // required: true,
+  },
+  product_category: {
+    type: String,
+
+  },
+  product_description: {
+    type: String,
+
+  },
+
+  unit_price: {
+    type: Number,
+    // required: true
+  },
+
+  product_image: { //croped image
+    type: String,
+    // required: true
   },
 
 });
