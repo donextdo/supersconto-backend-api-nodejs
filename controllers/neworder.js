@@ -1,6 +1,7 @@
 const Order = require("../models/neworder");
 const { request } = require("express");
 const Product = require("../models/product");
+const Catalog_page_item = require("../models/catalog_page_item")
 
 const createOrder = async (req, res) => {
   // const orderId = req.body.orderId;
@@ -190,7 +191,7 @@ const getOrderById = async (req, res) => {
 
     const productIds = order.items.map((item) => item.productId); // no need to use Set here
 
-    const products = await Product.find({ _id: { $in: productIds } });
+    const products = await Catalog_page_item.find({ _id: { $in: productIds } });
 
     const productMap = {};
     products.forEach((product) => {
@@ -214,7 +215,9 @@ const getOrderById = async (req, res) => {
       });
     }
 
-    const orderDetails = { // initialize orderDetails as an object instead of an array
+    const orderDetails = {
+      // initialize orderDetails as an object instead of an array
+      orderNumber:order.orderNumber,
       orderId: order._id,
       userId: order.userId,
       items: itemDetails,
@@ -225,6 +228,10 @@ const getOrderById = async (req, res) => {
       status: order.status,
       createdAt: order.createdAt,
       deletedAt: order.deletedAt,
+      address: order.address,
+      payment: order.payment
+      
+      
     };
 
     res.json(orderDetails);
