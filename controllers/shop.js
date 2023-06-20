@@ -20,6 +20,7 @@ const createShop = async (req, res) => {
     const newShop = new Shop({
       ...payload,
       logo_img: imgPath,
+      coordinates: [payload.longitude, payload.latitude]
     });
 
     const shop = await newShop.save();
