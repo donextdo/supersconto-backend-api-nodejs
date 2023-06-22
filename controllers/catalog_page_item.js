@@ -152,6 +152,50 @@ const countDocuments = async (req, res) => {
   }
 };
 
+const getMainCategories = async (req, res) => {
+  try {
+    const products = await CatelogBookPageItem.find({
+      product_category: req.params.categoryId,
+    })
+      .populate("product_category")
+      .exec();
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const getSubCategories = async (req, res) => {
+  try {
+    const products = await CatelogBookPageItem.find({
+      product_sub_category: req.params.categoryId,
+    })
+      .populate("product_sub_category")
+      .exec();
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const getMainSubCategories = async (req, res) => {
+  try {
+    const products = await CatelogBookPageItem.find({
+      $or: [
+        { product_sub_category: req.params.categoryId },
+        { product_category: req.params.categoryId },
+      ],
+    });
+
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 module.exports = {
   getAllCatelogBookPageItems,
   createCatelogBookPageItem,
@@ -160,4 +204,7 @@ module.exports = {
   updateCatelogBookPageItem,
   deleteCatelogBookPageItem,
   countDocuments,
+  getMainCategories,
+  getSubCategories,
+  getMainSubCategories,
 };

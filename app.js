@@ -13,24 +13,25 @@ if (process.env.NODE_ENV === "production") {
 } else {
   dotenv.config({ path: ".env.development" });
 }
-const passport = require('passport');
-require('./config/auth/auth');
+const passport = require("passport");
+require("./config/auth/auth");
 
-const indexRouter = require('./routes/index');
-const authRouter = require('./routes/auth-routes/auth-routes');
-const shopRouter = require('./routes/shop')
-const catelogBookRouter = require('./routes/catelog_book')
-const catelogBookPageRouter = require('./routes/catelog_book_page')
-const catelogBookItemRouter = require('./routes/catelog_book_page_item')
-const vendorRouter = require('./routes/vendor')
-const stockRouter = require('./routes/stock')
-const orderRouter = require('./routes/order')
-const newsRouter = require('./routes/news')
-const categoryRoutes = require('./routes/category-route');
-const searchRouter = require('./routes/search.route')
-const userAuth = require('./routes/user')
-const product = require('./routes/product')
-const neworder = require('./routes/neworder')
+const indexRouter = require("./routes/index");
+const authRouter = require("./routes/auth-routes/auth-routes");
+const shopRouter = require("./routes/shop");
+const catelogBookRouter = require("./routes/catelog_book");
+const catelogBookPageRouter = require("./routes/catelog_book_page");
+const catelogBookItemRouter = require("./routes/catelog_book_page_item");
+const vendorRouter = require("./routes/vendor");
+const stockRouter = require("./routes/stock");
+const orderRouter = require("./routes/order");
+const newsRouter = require("./routes/news");
+const categoryRoutes = require("./routes/category-route");
+const searchRouter = require("./routes/search.route");
+const userAuth = require("./routes/user");
+const product = require("./routes/product");
+const neworder = require("./routes/neworder");
+const filter = require("./routes/product_filter");
 
 const app = express();
 
@@ -42,23 +43,22 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/public", express.static(__dirname + "/public"));
 
-app.use('/v1/api', indexRouter);
-app.use('/v1/api/auth', authRouter)
-app.use('/v1/api/shop', shopRouter)
-app.use('/v1/api/catelog/book', catelogBookRouter)
-app.use('/v1/api/catelog/page', catelogBookPageRouter)
-app.use('/v1/api/catelog/item', catelogBookItemRouter)
-app.use('/v1/api/vendor', vendorRouter)
-app.use('/v1/api/stock', stockRouter)
-app.use('/v1/api/order', orderRouter)
-app.use('/v1/api/news', newsRouter)
-app.use('/v1/api/category', categoryRoutes);
-app.use('/v1/api/search', searchRouter)
-app.use('/v1/api/users', userAuth)
-app.use('/v1/api/product', product)
-app.use('/v1/api/neworder', neworder)
-
-
+app.use("/v1/api", indexRouter);
+app.use("/v1/api/auth", authRouter);
+app.use("/v1/api/shop", shopRouter);
+app.use("/v1/api/catelog/book", catelogBookRouter);
+app.use("/v1/api/catelog/page", catelogBookPageRouter);
+app.use("/v1/api/catelog/item", catelogBookItemRouter);
+app.use("/v1/api/vendor", vendorRouter);
+app.use("/v1/api/stock", stockRouter);
+app.use("/v1/api/order", orderRouter);
+app.use("/v1/api/news", newsRouter);
+app.use("/v1/api/category", categoryRoutes);
+app.use("/v1/api/search", searchRouter);
+app.use("/v1/api/users", userAuth);
+app.use("/v1/api/product", product);
+app.use("/v1/api/neworder", neworder);
+app.use("/v1/api/filter", filter);
 
 const mongoUri = process.env.MONGO_URI;
 
