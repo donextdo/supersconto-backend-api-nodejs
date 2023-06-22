@@ -1,5 +1,6 @@
 const CatelogBookPage = require("../models/catelogbook_page");
 const CatelogBookPageItem = require("../models/catalog_page_item");
+const socketIOClient = require("socket.io-client");
 
 const getAllCatelogBookPageItems = async (req, res) => {
   const query = req.query;
@@ -196,6 +197,28 @@ const getMainSubCategories = async (req, res) => {
   }
 };
 
+const searchBySocket = async (req, res) => {
+  const { query } = req.body;
+  console.log("search query : ", query);
+  // Create a Socket.io client
+  const socket = socketIOClient("http://localhost:5000");
+  console.log("socket : ", socket);
+
+  // Socket.io event listener for search results
+  socket.on("searchResults", (results) => {
+    console.log("Received search results:", results);
+
+    // Send the search results back to the client
+    res.status(200).json(results);
+
+    // Disconnect the Socket.io client
+    socket.disconnect();
+  });
+
+  // Send the search query to the server
+  socket.emit("search", query);
+};
+
 module.exports = {
   getAllCatelogBookPageItems,
   createCatelogBookPageItem,
@@ -207,4 +230,5 @@ module.exports = {
   getMainCategories,
   getSubCategories,
   getMainSubCategories,
+  searchBySocket,
 };

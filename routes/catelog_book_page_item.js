@@ -13,6 +13,7 @@ const {
   getMainCategories,
   getSubCategories,
   getMainSubCategories,
+  searchBySocket,
 } = require("../controllers/catalog_page_item");
 
 const uploadOptions = multer({ storage: storage });
@@ -41,5 +42,7 @@ router.get("/count", countDocuments);
 router.get("/main/category/:categoryId", getMainCategories);
 router.get("/sub/category/:categoryId", getSubCategories);
 router.get("/main/sub/category/:categoryId", getMainSubCategories);
+
+router.post("/searchBySocket", searchBySocket);
 
 module.exports = router;

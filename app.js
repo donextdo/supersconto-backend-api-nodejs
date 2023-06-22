@@ -6,6 +6,11 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 mongoose.set("debug", true);
 
+//search
+const http = require("http");
+const socketIo = require("socket.io");
+const axios = require("axios");
+
 dotenv = require("dotenv");
 console.log({ env: process.env.NODE_ENV });
 if (process.env.NODE_ENV === "production") {
@@ -71,5 +76,57 @@ mongoose
   .catch((err) => {
     throw err;
   });
+
+//search
+const server = http.createServer(app);
+const io = socketIo(server);
+
+async function searchProducts(query) {
+  try {
+    if (!query) {
+      console.error("Invalid search query.");
+      return [];
+    }
+    const response = await axios.get(
+      "http://localhost:3000/v1/api/catelog/item/"
+    );
+    const products = response.data;
+    console.log("response , ", response.data);
+    if (!products) {
+      console.error("Products not found in API response.");
+      return [];
+    }
+    const filteredProducts = products.filter((product) =>
+      product.product_name.toLowerCase().includes(query.toLowerCase())
+    );
+    console.log("filteredProducts : ", filteredProducts);
+    return filteredProducts;
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
+    return [];
+  }
+}
+io.on("connection", (socket) => {
+  console.log("A client connected.");
+
+  // Socket.io event listener for search requests
+  socket.on("search", async (query) => {
+    console.log(`Received search query: ${query}`);
+
+    const results = await searchProducts(query);
+
+    // Send the search results back to the client
+    socket.emit("searchResults", results);
+  });
+
+  // Socket.io event listener for client disconnections
+  socket.on("disconnect", () => {
+    console.log("A client disconnected.");
+  });
+});
+const port = 5000;
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}.`);
+});
 
 module.exports = app;
