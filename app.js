@@ -31,6 +31,8 @@ const searchRouter = require('./routes/search.route')
 const userAuth = require('./routes/user')
 const product = require('./routes/product')
 const neworder = require('./routes/neworder')
+const reviewRouter = require('./routes/review')
+
 
 const app = express();
 
@@ -57,6 +59,8 @@ app.use('/v1/api/search', searchRouter)
 app.use('/v1/api/users', userAuth)
 app.use('/v1/api/product', product)
 app.use('/v1/api/neworder', neworder)
+app.use('/v1/api/review', reviewRouter)
+
 
 
 
