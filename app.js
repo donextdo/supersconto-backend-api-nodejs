@@ -3,6 +3,10 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
+const cookieSession = require("cookie-session");
+const passportSetup = require("./controllers/social_auth");
+const authRoute = require("./routes/social_auth");
+
 const mongoose = require("mongoose");
 mongoose.set("debug", true);
 
@@ -64,6 +68,8 @@ app.use("/v1/api/users", userAuth);
 app.use("/v1/api/product", product);
 app.use("/v1/api/neworder", neworder);
 app.use("/v1/api/filter", filter);
+
+app.use("/v1/api/users", authRoute);
 
 const mongoUri = process.env.MONGO_URI;
 
@@ -128,5 +134,18 @@ const port = 5000;
 server.listen(port, () => {
   console.log(`Server listening on port ${port}.`);
 });
+
+// Set up session middleware
+app.use(
+  cookieSession({
+    secret: "session",
+    keys: ["cyberwolve"],
+    maxAge: 24 * 60 * 60 * 100,
+  })
+);
+
+// Initialize Passport and session middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
 module.exports = app;
