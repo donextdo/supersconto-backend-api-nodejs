@@ -1,5 +1,6 @@
 const CatelogBookPage = require("../models/catelogbook_page");
 const CatelogBookPageItem = require("../models/catalog_page_item");
+const socketIOClient = require("socket.io-client");
 
 const getAllCatelogBookPageItems = async (req, res) => {
   const query = req.query;
@@ -152,6 +153,72 @@ const countDocuments = async (req, res) => {
   }
 };
 
+const getMainCategories = async (req, res) => {
+  try {
+    const products = await CatelogBookPageItem.find({
+      product_category: req.params.categoryId,
+    })
+      .populate("product_category")
+      .exec();
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const getSubCategories = async (req, res) => {
+  try {
+    const products = await CatelogBookPageItem.find({
+      product_sub_category: req.params.categoryId,
+    })
+      .populate("product_sub_category")
+      .exec();
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const getMainSubCategories = async (req, res) => {
+  try {
+    const products = await CatelogBookPageItem.find({
+      $or: [
+        { product_sub_category: req.params.categoryId },
+        { product_category: req.params.categoryId },
+      ],
+    });
+
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const searchBySocket = async (req, res) => {
+  const { query } = req.body;
+  console.log("search query : ", query);
+  // Create a Socket.io client
+  const socket = socketIOClient("http://localhost:5000");
+  console.log("socket : ", socket);
+
+  // Socket.io event listener for search results
+  socket.on("searchResults", (results) => {
+    console.log("Received search results:", results);
+
+    // Send the search results back to the client
+    res.status(200).json(results);
+
+    // Disconnect the Socket.io client
+    socket.disconnect();
+  });
+
+  // Send the search query to the server
+  socket.emit("search", query);
+};
+
 module.exports = {
   getAllCatelogBookPageItems,
   createCatelogBookPageItem,
@@ -160,4 +227,8 @@ module.exports = {
   updateCatelogBookPageItem,
   deleteCatelogBookPageItem,
   countDocuments,
+  getMainCategories,
+  getSubCategories,
+  getMainSubCategories,
+  searchBySocket,
 };

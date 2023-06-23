@@ -61,6 +61,37 @@ const getMainCategoryById = async (req, res) => {
   }
 };
 
+const getSubCategoryById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const subCategory = await SubCategory.findById(id);
+    if (!subCategory) {
+      return res.status(404).json({ message: "Sub category not found" });
+    }
+    res.status(200).json(subCategory);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+const getSubCategoryByMainCategoryId = async (req, res) => {
+  try {
+    const { mainCategoryId } = req.params;
+    console.log("mainCategoryId : ", mainCategoryId);
+    const subCategory = await SubCategory.find({
+      mainCategoryId: mainCategoryId,
+    });
+    if (!subCategory) {
+      return res.status(404).json({ message: "Sub category not found" });
+    }
+    res.status(200).json(subCategory);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
 const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
@@ -151,4 +182,6 @@ module.exports = {
   getMainCategoryById,
   updateCategory,
   deleteCategory,
+  getSubCategoryById,
+  getSubCategoryByMainCategoryId,
 };

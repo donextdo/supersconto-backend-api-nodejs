@@ -30,6 +30,7 @@ const addProduct = async (req, res) => {
   const life = req.body.life;
   const product_name = req.body.product_name;
   const product_category = req.body.product_category;
+  const product_sub_category = req.body.product_sub_category;
   const product_description = req.body.product_description;
   const unit_price = req.body.unit_price;
   const product_image = req.body.product_image;
@@ -66,6 +67,7 @@ const addProduct = async (req, res) => {
     tags,
     product_name,
     product_category,
+    product_sub_category,
     product_description,
     unit_price,
     product_image,
@@ -132,6 +134,7 @@ const updateProduct = async (req, res) => {
     back: req.body.back,
     side: req.body.side,
     category: req.body.category,
+    product_sub_category: req.body.product_sub_category,
     quantity: req.body.quantity,
     price: req.body.price,
     isAvailable: req.body.isAvailable,
@@ -148,8 +151,6 @@ const updateProduct = async (req, res) => {
     updatedAt: new Date(),
     life: req.body.life,
     tag: req.body.tag,
-
-
   };
 
   try {
@@ -319,6 +320,71 @@ const pagePagination = async (req, res) => {
   }
 };
 
+const getMainCategories = async (req, res) => {
+  try {
+    const products = await Product.find({
+      product_category: req.params.categoryId,
+    })
+      .populate("product_category")
+      .exec();
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const getSubCategories = async (req, res) => {
+  try {
+    const products = await Product.find({
+      product_sub_category: req.params.categoryId,
+    })
+      .populate("product_sub_category")
+      .exec();
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+const getproductByfilter = async (req, res) => {
+  const baseUrl = "http://localhost:3000/v1/api/";
+
+  try {
+    const categoryId = req.query.categoryId;
+    const subCategories = req.query.subCategories;
+    const brands = req.query.brands;
+    const minPrice = parseFloat(req.query.min_price);
+    const maxPrice = parseFloat(req.query.max_price);
+
+    const subCatArr =
+      typeof subCategories === "string" ? subCategories.split(",") : [];
+
+    const brandArr = typeof brands === "string" ? brands.split(",") : [];
+
+    const url =
+      subCatArr.length > 0
+        ? `${baseUrl}/product/main/category/${subCatArr}`
+        : `${baseUrl}/product/sub/category/${categoryId}`;
+    const response = await axios.get(url);
+
+    let products = response.data;
+    if (brandArr.length > 0) {
+      products = products.filter((product) => brandArr.includes(product.brand));
+    }
+
+    if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+      products = products.filter(
+        (product) => product.price >= minPrice && product.price <= maxPrice
+      );
+    }
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.log("error : ", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 module.exports = {
   addProduct,
   getAllProduct,
@@ -329,6 +395,9 @@ module.exports = {
   search,
   getCategories,
   getBrandsName,
-  pagePagination,
+  // pagePagination,
+  getproductByfilter,
+  getMainCategories,
+  getSubCategories,
   // searchBySocket,
 };
