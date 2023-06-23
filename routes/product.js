@@ -14,6 +14,12 @@ router.post("/search", productController.search);
 // router.post("/searchBySocket", productController.searchBySocket);
 router.get("/:categoryId", productController.getCategories);
 router.get("/brands/:categoryId", productController.getBrandsName);
-router.get("/", productController.pagePagination);
+
+//filter product
+router.get("/", productController.getproductByfilter);
+
+//get main and sub category based on id
+router.get("/main/category/:categoryId", productController.getMainCategories);
+router.get("/sub/category/:categoryId", productController.getSubCategories);
 
 module.exports = router;

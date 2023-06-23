@@ -101,11 +101,14 @@ const ProductSchema = new Schema({
   },
   product_category: {
     type: String,
-
   },
+
+  product_sub_category: {
+    type: String,
+  },
+
   product_description: {
     type: String,
-
   },
 
   unit_price: {
@@ -113,11 +116,11 @@ const ProductSchema = new Schema({
     // required: true
   },
 
-  product_image: { //croped image
+  product_image: {
+    //croped image
     type: String,
     // required: true
   },
-
 });
 
 const Product = mongoose.model("product", ProductSchema);
