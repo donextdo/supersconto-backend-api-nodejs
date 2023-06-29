@@ -50,8 +50,8 @@ const app = express();
 
 app.use(cors());
 app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({limit:'50mb'})); // for incoming Request Object as json
+app.use(express.urlencoded({limit:'50mb', extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/public", express.static(__dirname + "/public"));
@@ -90,6 +90,13 @@ mongoose
   .catch((err) => {
     throw err;
   });
+mongoose.connection.on('open', (ref) => {
+  console.log({msg: 'Connecting to mongo server...', mongoUri});
+});
+
+mongoose.connection.on('error', (err) => {
+  console.log({msg: 'Could not connect to mongo server!', err});
+});
 
 //search
 const server = http.createServer(app);
