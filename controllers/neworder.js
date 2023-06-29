@@ -2,9 +2,12 @@ const Order = require("../models/neworder");
 const { request } = require("express");
 const Product = require("../models/product");
 const Catalog_page_item = require("../models/catalog_page_item");
+const axios = require("axios");
+let ORDERCURRENTBRAND = "BT";
+let ORDERCURRENTAMOUNT = 1000;
 
 const createOrder = async (req, res) => {
-  // const orderId = req.body.orderId;
+  const baseUrl = "http://localhost:3000/v1/api/neworder/";
   const userId = req.body.userId;
   const items = req.body.items;
   const billingAddress = req.body.billingAddress;
@@ -14,25 +17,33 @@ const createOrder = async (req, res) => {
   const status = req.body.status;
   const createdAt = new Date();
   const deletedAt = null;
-
-  const order = new Order({
-    // orderId,
-    userId,
-    items,
-    billingAddress,
-    shippingAddress,
-    date,
-    totalprice,
-    status,
-    createdAt,
-    deletedAt,
-  });
+  console.log("ssssssssssssss", userId);
   try {
+    const orderCount = await axios.get(`${baseUrl}`);
+    const count = orderCount.data.length;
+    const orderNumber =
+      ORDERCURRENTBRAND + (parseInt(ORDERCURRENTAMOUNT) + (count + 1));
+    console.log("count : ", count);
+    const order = new Order({
+      orderNumber,
+      userId,
+      items,
+      billingAddress,
+      shippingAddress,
+      date,
+      totalprice,
+      status,
+      createdAt,
+      deletedAt,
+    });
+    console.log("save : ", order);
     let response = await order.save();
+    console.log("save : ", response);
     if (response) {
-      return res
-        .status(201)
-        .send({ orderId: response._id, message: "Order Successful" });
+      return res.status(201).send({
+        orderNumber: response.orderNumber,
+        message: "Order Successful",
+      });
     } else {
       return res.status(500).send({ message: "Internal server error" });
     }
@@ -138,16 +149,19 @@ const getOrderByUser = async (req, res) => {
         ...new Set(order.items.map((item) => item.productId)),
       ];
 
-      const products = await Product.find({ _id: { $in: productIds } });
+      const products = await Catalog_page_item.find({
+        _id: { $in: productIds },
+      });
 
       const productMap = {};
       products.forEach((product) => {
         productMap[product._id] = {
+          shopId: product.shop_id,
           name: product.product_name,
           brand: product.brand,
           description: product.description,
-          price: product.price,
-          front: product.front,
+          price: product.unit_price,
+          front: product.product_image,
         };
       });
 
@@ -160,10 +174,12 @@ const getOrderByUser = async (req, res) => {
           productId: item.productId,
           orderquantity: item.orderquantity,
           productDetails: productMap[item.productId],
+          shopId: item.shopId,
         });
       }
 
       orderDetails.push({
+        orderNumber: order.orderNumber,
         orderId: order._id,
         userId: order.userId,
         items: itemDetails,
