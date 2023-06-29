@@ -24,7 +24,9 @@ const createOrder = async (req, res) => {
     const orderNumber =
       ORDERCURRENTBRAND + (parseInt(ORDERCURRENTAMOUNT) + (count + 1));
     console.log("count : ", count);
-    const order = new Order({
+    // const order = new Order();
+    // console.log("save : ", order);
+    let response = await Order.create({
       orderNumber,
       userId,
       items,
@@ -36,8 +38,6 @@ const createOrder = async (req, res) => {
       createdAt,
       deletedAt,
     });
-    console.log("save : ", order);
-    let response = await order.save();
     console.log("save : ", response);
     if (response) {
       return res.status(201).send({
@@ -203,7 +203,7 @@ const getOrderById = async (req, res) => {
   const orderId = req.params.id;
 
   try {
-    const order = await Order.findOne({ _id: orderId }); // use findOne instead of find, and search by _id instead of orderId
+    const order = await Order.findOne({ orderNumber: orderId }); // use findOne instead of find, and search by _id instead of orderId
 
     const productIds = order.items.map((item) => item.productId); // no need to use Set here
     console.log({ productIds });
