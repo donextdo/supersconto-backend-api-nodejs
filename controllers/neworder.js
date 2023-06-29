@@ -1,7 +1,7 @@
 const Order = require("../models/neworder");
 const { request } = require("express");
 const Product = require("../models/product");
-const Catalog_page_item = require("../models/catalog_page_item")
+const Catalog_page_item = require("../models/catalog_page_item");
 
 const createOrder = async (req, res) => {
   // const orderId = req.body.orderId;
@@ -30,7 +30,9 @@ const createOrder = async (req, res) => {
   try {
     let response = await order.save();
     if (response) {
-      return res.status(201).send({ orderId: response._id, message: "Order Successful" });
+      return res
+        .status(201)
+        .send({ orderId: response._id, message: "Order Successful" });
     } else {
       return res.status(500).send({ message: "Internal server error" });
     }
@@ -57,15 +59,13 @@ const getAllOrders = async (req, res) => {
 };
 
 //get order by id
-const  getOrderByOrderId = async (req, res) => {
-
+const getOrderByOrderId = async (req, res) => {
   const orderId = req.params.id;
 
   try {
     let response = await Order.findById(orderId);
 
     if (response) {
-      
       return res.json(response);
     } else {
       return res.status(404).send({ message: "No such order found" });
@@ -85,7 +85,7 @@ const updateOrder = async (req, res) => {
     userId: req.body.userId,
     items: req.body.items,
     billingAddress: req.body.billingAddress,
-    shippingAddress : req.body.shippingAddress,
+    shippingAddress: req.body.shippingAddress,
     date: req.body.date,
     totalprice: req.body.totalprice,
     status: req.body.status,
@@ -143,7 +143,7 @@ const getOrderByUser = async (req, res) => {
       const productMap = {};
       products.forEach((product) => {
         productMap[product._id] = {
-          name: product.title,
+          name: product.product_name,
           brand: product.brand,
           description: product.description,
           price: product.price,
@@ -190,17 +190,18 @@ const getOrderById = async (req, res) => {
     const order = await Order.findOne({ _id: orderId }); // use findOne instead of find, and search by _id instead of orderId
 
     const productIds = order.items.map((item) => item.productId); // no need to use Set here
-
+    console.log({ productIds });
     const products = await Catalog_page_item.find({ _id: { $in: productIds } });
 
     const productMap = {};
     products.forEach((product) => {
       productMap[product._id] = {
-        name: product.title,
+        shopId: product.shop_id,
+        name: product.product_name,
         brand: product.brand,
         description: product.description,
-        price: product.price,
-        front: product.front,
+        price: product.unit_price,
+        front: product.product_image,
       };
     });
 
@@ -212,12 +213,13 @@ const getOrderById = async (req, res) => {
         productId: item.productId,
         orderquantity: item.orderquantity,
         productDetails: productMap[item.productId],
+        shopId: item.shopId,
       });
     }
 
     const orderDetails = {
       // initialize orderDetails as an object instead of an array
-      orderNumber:order.orderNumber,
+      orderNumber: order.orderNumber,
       orderId: order._id,
       userId: order.userId,
       items: itemDetails,
@@ -229,15 +231,13 @@ const getOrderById = async (req, res) => {
       createdAt: order.createdAt,
       deletedAt: order.deletedAt,
       address: order.address,
-      payment: order.payment
-      
-      
+      payment: order.payment,
     };
 
     res.json(orderDetails);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send("order ID incorrect");
   }
 };
 
