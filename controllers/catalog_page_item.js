@@ -3,6 +3,7 @@ const CatelogBookPageItem = require("../models/catalog_page_item");
 const socketIOClient = require("socket.io-client");
 
 const getAllCatelogBookPageItems = async (req, res) => {
+  
   const query = req.query;
 
   try {
@@ -78,10 +79,10 @@ const getCatelogBookPageItem = async (req, res) => {
 
 const getCatelogBookPageItemByIds = async (req, res) => {
   try {
+    console.log(req.body.items )
     const catelogBookPageItem = await CatelogBookPageItem.find({
       _id: { $in: req.body.items },
     }).populate("shop_id");
-
     if (!catelogBookPageItem) {
       return res.status(404).json({
         message: `No catelog Book Page Item associate with ${req.params.is}`,
@@ -90,6 +91,7 @@ const getCatelogBookPageItemByIds = async (req, res) => {
 
     res.status(200).json(catelogBookPageItem);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Internal Server error" });
   }
 };

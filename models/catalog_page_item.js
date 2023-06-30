@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const CatelogBookPageItemSchema = new mongoose.Schema(
   {
-    // shop_id: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Shop',
-    //     // required: true
-    // },
+    shop_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Shop',
+        // required: true
+    },
 
     // catelog_book_id: {
     //     type: mongoose.Schema.Types.ObjectId,
