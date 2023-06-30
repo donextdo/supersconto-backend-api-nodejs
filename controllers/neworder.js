@@ -25,8 +25,38 @@ const createOrder = async (req, res) => {
     const orderNumber =
       ORDERCURRENTBRAND + (parseInt(ORDERCURRENTAMOUNT) + (count + 1));
 
-    // const order = new Order();
-    // console.log("save : ", order);
+    try {
+      const products = req.body.items;
+
+      // Loop through each product
+      for (const product of products) {
+        const { productId, orderquantity } = product;
+
+        const catalogBookPageItem = await CatelogBookPageItem.findById(
+          productId
+        );
+
+        if (!catalogBookPageItem) {
+          return res
+            .status(404)
+            .json({
+              message: `No CatelogBook with ID ${catalogBookPageItem.product_name}`,
+            });
+        }
+
+        if (orderquantity > catalogBookPageItem.remaining_qty) {
+          return res.status(400).json({
+            message: `Insufficient quantity for product with ID ${catalogBookPageItem.product_name}`,
+          });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .json({ message: "Error checking product quantities" });
+    }
+
     let response = await Order.create({
       orderNumber,
       userId,
@@ -56,7 +86,9 @@ const createOrder = async (req, res) => {
           if (!catelogBookPageItemExist) {
             return res
               .status(404)
-              .json({ message: `No CatelogBook with ID ${productId}` });
+              .json({
+                message: `No CatelogBook with ID ${catelogBookPageItemExist.product_name}`,
+              });
           }
 
           const remainingItem =
@@ -77,7 +109,7 @@ const createOrder = async (req, res) => {
       } catch (error) {
         console.log(error);
         res
-          .status(500)
+          .status(404)
           .json({ message: "Error updating product catalog item quantities" });
       }
     } else {
@@ -85,7 +117,7 @@ const createOrder = async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    return res.status(400).send({ message: "Error while placing Order" });
+    return res.status(500).send({ message: "Error while placing Order" });
   }
 };
 
