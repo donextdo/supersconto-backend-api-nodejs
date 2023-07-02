@@ -10,13 +10,17 @@ const getproductByfilter = async (req, res) => {
     const minPrice = parseFloat(req.query.min_price);
     const maxPrice = parseFloat(req.query.max_price);
 
-    const filter = buildFilterObject(
-      categoryId,
-      subCategories,
-      brands,
-      minPrice,
-      maxPrice
-    );
+    const filter = {
+      $and: [
+        buildFilterObject(
+            categoryId,
+            subCategories,
+            brands,
+            minPrice,
+            maxPrice
+        )
+      ]
+    };
 
     // Retrieve the filtered products from the database
     const products = await CatelogBookPageItem.find(filter);
@@ -52,7 +56,9 @@ const buildFilterObject = (
   }
 
   if (!isNaN(minPrice) && !isNaN(maxPrice)) {
-    filter.unit_price = { $gte: minPrice, $lte: maxPrice };
+    if (minPrice > 0 && maxPrice > 0) {
+      filter.unit_price = {$gte: minPrice, $lte: maxPrice};
+    }
   }
 
   return filter;
