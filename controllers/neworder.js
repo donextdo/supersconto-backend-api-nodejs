@@ -1,10 +1,14 @@
 const Order = require("../models/neworder");
 const { request } = require("express");
 const Product = require("../models/product");
-const Catalog_page_item = require("../models/catalog_page_item")
+const Catalog_page_item = require("../models/catalog_page_item");
+const axios = require("axios");
+const CatelogBookPageItem = require("../models/catalog_page_item");
+let ORDERCURRENTBRAND = "BT";
+let ORDERCURRENTAMOUNT = 1000;
 
 const createOrder = async (req, res) => {
-  // const orderId = req.body.orderId;
+  const baseUrl = "http://localhost:3000/v1/api/neworder/";
   const userId = req.body.userId;
   const items = req.body.items;
   const billingAddress = req.body.billingAddress;
@@ -15,28 +19,105 @@ const createOrder = async (req, res) => {
   const createdAt = new Date();
   const deletedAt = null;
 
-  const order = new Order({
-    // orderId,
-    userId,
-    items,
-    billingAddress,
-    shippingAddress,
-    date,
-    totalprice,
-    status,
-    createdAt,
-    deletedAt,
-  });
   try {
-    let response = await order.save();
+    const orderCount = await axios.get(`${baseUrl}`);
+    const count = orderCount.data.length;
+    const orderNumber =
+      ORDERCURRENTBRAND + (parseInt(ORDERCURRENTAMOUNT) + (count + 1));
+
+    try {
+      const products = req.body.items;
+
+      // Loop through each product
+      for (const product of products) {
+        const { productId, orderquantity } = product;
+
+        const catalogBookPageItem = await CatelogBookPageItem.findById(
+          productId
+        );
+
+        if (!catalogBookPageItem) {
+          return res
+            .status(404)
+            .json({
+              message: `No CatelogBook with ID ${catalogBookPageItem.product_name}`,
+            });
+        }
+
+        if (orderquantity > catalogBookPageItem.remaining_qty) {
+          return res.status(400).json({
+            message: `Insufficient quantity for product with ID ${catalogBookPageItem.product_name}`,
+          });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .json({ message: "Error checking product quantities" });
+    }
+
+    let response = await Order.create({
+      orderNumber,
+      userId,
+      items,
+      billingAddress,
+      shippingAddress,
+      date,
+      totalprice,
+      status,
+      createdAt,
+      deletedAt,
+    });
+
     if (response) {
-      return res.status(201).send({ orderId: response._id, message: "Order Successful" });
+      // Update product catalog item quantities
+      try {
+        const products = req.body.items;
+
+        // Loop through each product
+        for (const product of products) {
+          const { productId, orderquantity } = product;
+
+          const catelogBookPageItemExist = await CatelogBookPageItem.findById(
+            productId
+          );
+
+          if (!catelogBookPageItemExist) {
+            return res
+              .status(404)
+              .json({
+                message: `No CatelogBook with ID ${catelogBookPageItemExist.product_name}`,
+              });
+          }
+
+          const remainingItem =
+            catelogBookPageItemExist.remaining_qty - orderquantity;
+
+          // Update the CatelogBookPageItem with the new remaining item value
+          await CatelogBookPageItem.findByIdAndUpdate(
+            productId,
+            { remaining_qty: remainingItem },
+            { new: true, runValidators: true }
+          );
+        }
+
+        res.status(201).send({
+          orderNumber: response.orderNumber,
+          message: "Order Successful",
+        });
+      } catch (error) {
+        console.log(error);
+        res
+          .status(404)
+          .json({ message: "Error updating product catalog item quantities" });
+      }
     } else {
       return res.status(500).send({ message: "Internal server error" });
     }
   } catch (err) {
     console.log(err);
-    return res.status(400).send({ message: "Error while placing Order" });
+    return res.status(500).send({ message: "Error while placing Order" });
   }
 };
 
@@ -57,15 +138,13 @@ const getAllOrders = async (req, res) => {
 };
 
 //get order by id
-const  getOrderByOrderId = async (req, res) => {
-
+const getOrderByOrderId = async (req, res) => {
   const orderId = req.params.id;
 
   try {
     let response = await Order.findById(orderId);
 
     if (response) {
-      
       return res.json(response);
     } else {
       return res.status(404).send({ message: "No such order found" });
@@ -81,23 +160,14 @@ const updateOrder = async (req, res) => {
   const Id = req.params.id;
 
   let orderUpdate = {
-    orderId: req.body.orderId,
-    userId: req.body.userId,
-    items: req.body.items,
-    billingAddress: req.body.billingAddress,
-    shippingAddress : req.body.shippingAddress,
-    date: req.body.date,
-    totalprice: req.body.totalprice,
     status: req.body.status,
-    createdAt: new Date(),
-    deletedAt: null,
   };
 
   try {
     const response = await Order.findOneAndUpdate({ _id: Id }, orderUpdate);
 
     if (response) {
-      return res.status(200).send({ message: "Successfully updated Order " });
+      return res.status(200).send({ message: "Successfully updated Order" });
     } else {
       return res.status(500).send({ message: "Internal server error" });
     }
@@ -105,7 +175,6 @@ const updateOrder = async (req, res) => {
     return res.status(400).send({ message: "Unable to update" });
   }
 };
-
 //delete order by id
 const deleteOrder = async (req, res) => {
   const Id = req.params.id;
@@ -138,16 +207,19 @@ const getOrderByUser = async (req, res) => {
         ...new Set(order.items.map((item) => item.productId)),
       ];
 
-      const products = await Product.find({ _id: { $in: productIds } });
+      const products = await Catalog_page_item.find({
+        _id: { $in: productIds },
+      });
 
       const productMap = {};
       products.forEach((product) => {
         productMap[product._id] = {
-          name: product.title,
+          shopId: product.shop_id,
+          name: product.product_name,
           brand: product.brand,
           description: product.description,
-          price: product.price,
-          front: product.front,
+          price: product.unit_price,
+          front: product.product_image,
         };
       });
 
@@ -160,10 +232,12 @@ const getOrderByUser = async (req, res) => {
           productId: item.productId,
           orderquantity: item.orderquantity,
           productDetails: productMap[item.productId],
+          shopId: item.shopId,
         });
       }
 
       orderDetails.push({
+        orderNumber: order.orderNumber,
         orderId: order._id,
         userId: order.userId,
         items: itemDetails,
@@ -187,20 +261,21 @@ const getOrderById = async (req, res) => {
   const orderId = req.params.id;
 
   try {
-    const order = await Order.findOne({ _id: orderId }); // use findOne instead of find, and search by _id instead of orderId
+    const order = await Order.findOne({ orderNumber: orderId }); // use findOne instead of find, and search by _id instead of orderId
 
     const productIds = order.items.map((item) => item.productId); // no need to use Set here
-
+    console.log({ productIds });
     const products = await Catalog_page_item.find({ _id: { $in: productIds } });
 
     const productMap = {};
     products.forEach((product) => {
       productMap[product._id] = {
-        name: product.title,
+        shopId: product.shop_id,
+        name: product.product_name,
         brand: product.brand,
         description: product.description,
-        price: product.price,
-        front: product.front,
+        price: product.unit_price,
+        front: product.product_image,
       };
     });
 
@@ -212,12 +287,13 @@ const getOrderById = async (req, res) => {
         productId: item.productId,
         orderquantity: item.orderquantity,
         productDetails: productMap[item.productId],
+        shopId: item.shopId,
       });
     }
 
     const orderDetails = {
       // initialize orderDetails as an object instead of an array
-      orderNumber:order.orderNumber,
+      orderNumber: order.orderNumber,
       orderId: order._id,
       userId: order.userId,
       items: itemDetails,
@@ -229,15 +305,13 @@ const getOrderById = async (req, res) => {
       createdAt: order.createdAt,
       deletedAt: order.deletedAt,
       address: order.address,
-      payment: order.payment
-      
-      
+      payment: order.payment,
     };
 
     res.json(orderDetails);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send("order ID incorrect");
   }
 };
 

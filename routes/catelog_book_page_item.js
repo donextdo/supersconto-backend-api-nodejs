@@ -14,6 +14,7 @@ const {
   getSubCategories,
   getMainSubCategories,
   searchBySocket,
+  updateCatelogBookPageItemRemainingQuentity,
 } = require("../controllers/catalog_page_item");
 
 const uploadOptions = multer({ storage: storage });
@@ -44,5 +45,7 @@ router.get("/sub/category/:categoryId", getSubCategories);
 router.get("/main/sub/category/:categoryId", getMainSubCategories);
 
 router.post("/searchBySocket", searchBySocket);
+
+router.patch("/update/quentity", updateCatelogBookPageItemRemainingQuentity);
 
 module.exports = router;

@@ -290,6 +290,30 @@ const getOrdersByShopId = async (req, res, next) => {
   }
 };
 
+const getOrdersAndMapAllData = async (req, res, next) => {
+  try {
+    const baseUrl = "http://localhost:3000/v1/api/";
+
+    const { data } = await axios.get(`${baseUrl}/order`);
+    const shopId = req.params.shopId;
+
+    const orders = await Order.find({
+      shop: shopId,
+    }).populate({
+      path: "shop",
+      select: ["shop_name", "address"],
+    });
+    // .populate({
+    //     path: 'customer',
+    //     select: ['fullName']
+    // })
+
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
 module.exports = {
   createOrder,
   getAllOrders,

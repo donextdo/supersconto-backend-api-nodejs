@@ -1,7 +1,18 @@
 const bcrypt = require("bcrypt");
 const { request } = require("express");
 const User = require("../models/user");
-const auth = require('jsonwebtoken')
+const auth = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+const SECRET_KEY = "your_secret_key";
+const EMAIL_FROM = "thisararpg@gmail.com";
+const EMAIL_HOST = "smtp.example.com";
+const EMAIL_PORT = 587;
+const EMAIL_USERNAME = "your_username";
+const EMAIL_PASSWORD = "your_password";
+const FRONTEND_BASE_URL = "http://localhost:3001/successpage";
 
 //register new user
 const register = async (req, res) => {
@@ -15,7 +26,6 @@ const register = async (req, res) => {
   const billingAddress = req.body.billingAddress;
   const shippingAddress = req.body.shippingAddress;
 
-
   const salt = bcrypt.genSaltSync(10);
   const password = bcrypt.hashSync(pwd, salt);
 
@@ -28,24 +38,96 @@ const register = async (req, res) => {
     lastName,
     companyName,
     billingAddress,
-    shippingAddress
+    shippingAddress,
   });
 
   try {
-    const userExists = await User.findOne({email : email});
+    const userExists = await User.findOne({ email: email });
     if (userExists) {
       res.status(400).send({ message: "User Already Exists" });
     } else {
       let response = await user.save();
+
       if (response) {
-        return res.status(201).send({ message: "New User registered" });
+        // verify email link send
+        sendEmailVerification(email);
+        // call the verify endpoint
+        console.log("process.env.SECRET_KEY : ", SECRET_KEY);
+        res.status(201).json({
+          message: "Sign-up successful.",
+        });
       } else {
-        return res.status(500).send({ message: "Internal server error" });
+        res
+          .status(500)
+          .json({ message: "Sign-up failed. Please try again later." });
       }
     }
   } catch (err) {
     console.log(err);
-    return res.status(400).send({ message: "Error while registering a user" });
+    return res.status(500).send({ message: "Error while registering a user" });
+  }
+};
+
+//send email for the verification
+const sendEmailVerification = async (email) => {
+  const token = jwt.sign({ email }, SECRET_KEY, {
+    expiresIn: "1h",
+  });
+  // const token = "token";
+  const transporter = nodemailer.createTransport({
+    host: EMAIL_HOST,
+    port: EMAIL_PORT,
+    secure: false,
+    auth: {
+      user: EMAIL_USERNAME,
+      pass: EMAIL_PASSWORD,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+  const frontendBaseURL = FRONTEND_BASE_URL;
+  console.log("verify the email: ", email);
+  const verificationEmail = {
+    from: EMAIL_FROM,
+    to: email,
+    subject: "Email Verification",
+    html: `
+    <p>Please click the following link to verify your email:</p>
+    <a href="http://localhost:3000/v1/api/users/verify/${token}">Verify Email</a>
+    `,
+  };
+  console.log(`http://localhost:3000/v1/api/users/verify/${token}`);
+  console.log("verify the email: ", verificationEmail);
+  try {
+    await transporter.sendMail(verificationEmail);
+  } catch (error) {
+    console.log("error while sending the email: ", error);
+    const response = await User.findOneAndUpdate(
+      { email },
+      { isemailverify: true }
+    );
+    if (response) {
+      console.log("Sign up Done");
+    }
+  }
+};
+
+//verify tocken and update user verify status
+const VerifyEmailByUser = async (req, res) => {
+  try {
+    // Verify the token
+    const decodedToken = jwt.verify(req.params.token, process.env.SECRET_KEY);
+    console.log("decodedToken: ", decodedToken);
+    // Update the user's verification status in your database
+    const { email } = decodedToken;
+    await User.findOneAndUpdate({ email }, { isemailverify: true });
+
+    // Redirect the user to a success page
+    res.redirect(process.env.FRONTEND_BASE_URL);
+  } catch (error) {
+    console.error("Error during verification:", error);
+    res.redirect("/verification/error");
   }
 };
 
@@ -58,15 +140,15 @@ const login = async (req, res) => {
   const user = await User.findOne({ email: email });
 
   if (!user) {
-    return res.status(400).send('Invalid email or password.');
+    return res.status(400).send("Invalid email or password.");
   }
 
   const validPassword = await bcrypt.compare(password, user.password);
   if (!validPassword) {
-    return res.status(400).send('Invalid email or password .');
+    return res.status(400).send("Invalid email or password .");
   }
 
-  const token = auth.sign({ _id: id }, 'myprivatekey');
+  const token = auth.sign({ _id: id }, "myprivatekey");
 
   // res.send(`  ${token}`);
   res.status(200).send({ ...user.toJSON(), token });
@@ -111,7 +193,7 @@ const getOneUser = async (req, res) => {
 
   try {
     let user = await User.findOne({
-      _id : id,
+      _id: id,
     });
     if (user) {
       return res.json(user);
@@ -183,7 +265,7 @@ const updateUser = async (req, res) => {
   };
 
   try {
-    const response = await User.findOneAndUpdate({ _id : id }, updateUser);
+    const response = await User.findOneAndUpdate({ _id: id }, updateUser);
     if (response) {
       return res
         .status(200)
@@ -205,4 +287,5 @@ module.exports = {
   getOneUser,
   updateUserPassword,
   updateUser,
+  VerifyEmailByUser,
 };
