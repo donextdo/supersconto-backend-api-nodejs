@@ -1,7 +1,9 @@
 const Roles = require("../models/constants/roles");
+const User = require("../models/user");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
-const { createToken } = require('../utils/token')
+const {createToken} = require('../utils/token')
+const auth = require("jsonwebtoken");
 
 const loginAll = async (req, res, next) => {
     passport.authenticate(
@@ -9,7 +11,7 @@ const loginAll = async (req, res, next) => {
         async (err, user, info) => {
             try {
                 if (err || !user) {
-                    return res.status(401).json({ message: info?.message,})
+                    return res.status(401).json({message: info?.message,})
                 }
                 req.login(
                     user,
@@ -45,7 +47,7 @@ const signupAll = async (req, res, next) => {
                     duplicate: Object.keys(err.keyValue),
                     message: `Duplicate value entered for ${Object.keys(
                         err.keyValue
-                      )} field, please choose another value`
+                    )} field, please choose another value`
                 })
             }
 
@@ -68,7 +70,7 @@ const signupAll = async (req, res, next) => {
 
 const getAuthUser = async (req, res, next) => {
     try {
-        if(!req.user) {
+        if (!req.user) {
             return res.status(404).json({
                 success: false,
                 message: "Please login"
@@ -82,4 +84,33 @@ const getAuthUser = async (req, res, next) => {
     }
 }
 
-module.exports = {loginAll, signupAll, getAuthUser}
+const socialLoginAll = async (req, res, next) => {
+    try {
+        const {email, fullName, picture, role} = req.body
+
+        const user = await User.findOne({email}).select("-password").lean();
+        if (user) {
+            const token = auth.sign({_id: user.id}, 'myprivatekey');
+            return res.status(200).send({...user, token});
+        } else {
+            const nameArr = fullName.split(" ")
+
+            let registeredUser = await User.create({
+                email,
+                firstName: nameArr[0],
+                lastName: nameArr[nameArr.length],
+            });
+
+            if (registeredUser) {
+                const token = auth.sign({_id: registeredUser.id}, 'myprivatekey');
+                return res.status(200).send({...registeredUser, token});
+            }
+
+        }
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send({message: "Internal server error"});
+    }
+}
+
+module.exports = {loginAll, signupAll, getAuthUser, socialLoginAll}

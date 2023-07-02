@@ -221,6 +221,44 @@ const searchBySocket = async (req, res) => {
   socket.emit("search", query);
 };
 
+const updateCatelogBookPageItemRemainingQuentity = async (req, res) => {
+  try {
+    const products = req.body;
+
+    // Loop through each product
+    for (const product of products) {
+      const { productId, orderquantity } = product;
+
+      const catelogBookPageItemExist = await CatelogBookPageItem.findById(
+        productId
+      );
+
+      if (!catelogBookPageItemExist) {
+        return res
+          .status(404)
+          .json({ message: `No CatelogBook with ID ${productId}` });
+      }
+
+      const remainingItem =
+        catelogBookPageItemExist.remaining_qty - orderquantity;
+
+      // Update the CatelogBookPageItem with the new remaining item value
+      await CatelogBookPageItem.findByIdAndUpdate(
+        productId,
+        { remainingItem },
+        { new: true, runValidators: true }
+      );
+    }
+
+    res
+      .status(200)
+      .json({ message: "CatelogBookPageItems updated successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   getAllCatelogBookPageItems,
   createCatelogBookPageItem,
@@ -233,4 +271,5 @@ module.exports = {
   getSubCategories,
   getMainSubCategories,
   searchBySocket,
+  updateCatelogBookPageItemRemainingQuentity,
 };
