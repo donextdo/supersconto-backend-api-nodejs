@@ -32,7 +32,7 @@ const UserSchema = new Schema({
 
   isFavourite: {},
 
-  whishList: [],
+  wishList: [],
 
   billingAddress: {
     type: {

@@ -250,7 +250,7 @@ const addWishList = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     console.log("user", user);
-    const products = req.body.whishList;
+    const products = req.body.wishList;
 
     const productList = products.map((p) => ({
       productId: p.productId,
@@ -261,7 +261,7 @@ const addWishList = async (req, res) => {
       quantity: p.quantity,
     }));
 
-    user.whishList.push(...productList);
+    user.wishList.push(...productList);
 
     await user.save();
 
@@ -277,7 +277,7 @@ const deleteFromWishList = async (req, res) => {
     const user = await User.findById(req.params.id);
 
     // Remove the product from the wishlist array
-    user.whishList = user.whishList.filter(
+    user.wishList = user.wishList.filter(
       (product) => product.productId !== req.params.productId
     );
 
