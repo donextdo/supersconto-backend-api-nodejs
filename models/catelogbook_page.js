@@ -6,7 +6,7 @@ const CatelogBookPageSchema = new mongoose.Schema({
         ref: 'Shop',
         required: true
     },
-    
+
     catelog_book_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'CatelogBook',
@@ -36,6 +36,17 @@ const CatelogBookPageSchema = new mongoose.Schema({
     isDelete: {
         type: Boolean,
         default: false
+    },
+
+    dimensions: {
+        width: {
+            type: Number,
+            required: true
+        },
+        height: {
+            type: Number,
+            required: true
+        }
     },
 
     items: [{

@@ -32,6 +32,8 @@ const UserSchema = new Schema({
 
   isFavourite: {},
 
+  whishList: [],
+
   billingAddress: {
     type: {
       billingFirstName: { type: String, required: false },

@@ -6,7 +6,7 @@ const NewOrderSchema = new Schema({
 
   userId: {
     type: String,
-    required: true,
+    // required: true,
   },
 
   items: [],

@@ -246,6 +246,50 @@ const updateUserPassword = async (req, res) => {
   }
 };
 
+const addWishList = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    console.log("user", user);
+    const products = req.body.whishList;
+
+    const productList = products.map((p) => ({
+      productId: p.productId,
+      date: p.date,
+      front: p.front,
+      title: p.title,
+      price: p.price,
+      quantity: p.quantity,
+    }));
+
+    user.whishList.push(...productList);
+
+    await user.save();
+
+    res.status(200).json({ message: "Products added to wishlist" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const deleteFromWishList = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    // Remove the product from the wishlist array
+    user.whishList = user.whishList.filter(
+      (product) => product.productId !== req.params.productId
+    );
+
+    await user.save();
+
+    res.status(200).json({ message: "Product removed from wishlist" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 const updateUser = async (req, res) => {
   const id = req.params.id;
   const user = await User.findOne({ _id: id });
@@ -288,4 +332,6 @@ module.exports = {
   updateUserPassword,
   updateUser,
   VerifyEmailByUser,
+  addWishList,
+  deleteFromWishList
 };
