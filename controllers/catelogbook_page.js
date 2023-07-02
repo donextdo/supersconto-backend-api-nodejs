@@ -9,10 +9,11 @@ const createCatelogBookPages = async (req, res) => {
   }
 
   const imgPath = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
-  const { page_image, ...payload } = req.body;
+  const { page_image, dimensions,...payload } = req.body;
   const newCatelogBookPage = new CatelogBookPage({
     ...payload,
     page_image: imgPath,
+    dimensions:JSON.parse(dimensions)
   });
 
   try {
