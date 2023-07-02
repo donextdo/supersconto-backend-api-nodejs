@@ -257,14 +257,17 @@ const getOrderByUser = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+
+
 const getOrderById = async (req, res) => {
   const orderId = req.params.id;
-
+  
   try {
     const order = await Order.findOne({ orderNumber: orderId }); // use findOne instead of find, and search by _id instead of orderId
-
+    console.log(order);
     const productIds = order.items.map((item) => item.productId); // no need to use Set here
     console.log({ productIds });
+   
     const products = await Catalog_page_item.find({ _id: { $in: productIds } });
 
     const productMap = {};

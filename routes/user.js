@@ -16,7 +16,8 @@ router.get("/", userController.getAllUsers);
 router.get("/:id", userController.getOneUser);
 router.patch("/:id/:pwd", userController.updateUserPassword);
 router.patch("/:id", userController.updateUser);
-
+router.post("/wishList/:id", userController.addWishList);
+router.delete("/:id/wishList/:productId", userController.deleteFromWishList);
 router.get("/verify/:token", userController.VerifyEmailByUser);
 
 module.exports = router;
