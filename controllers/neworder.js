@@ -93,7 +93,7 @@ const createOrder = async (req, res) => {
 
           const remainingItem =
             catelogBookPageItemExist.remaining_qty - orderquantity;
-
+          console.log(remainingItem)
           // Update the CatelogBookPageItem with the new remaining item value
           await CatelogBookPageItem.findByIdAndUpdate(
             productId,
