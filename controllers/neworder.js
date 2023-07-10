@@ -8,7 +8,6 @@ let ORDERCURRENTBRAND = "BT";
 let ORDERCURRENTAMOUNT = 1000;
 
 const createOrder = async (req, res) => {
-  const baseUrl = "http://localhost:3000/v1/api/neworder/";
   const userId = req.body.userId;
   const items = req.body.items;
   const billingAddress = req.body.billingAddress;
@@ -20,8 +19,8 @@ const createOrder = async (req, res) => {
   const deletedAt = null;
 
   try {
-    const orderCount = await axios.get(`${baseUrl}`);
-    const count = orderCount.data.length;
+    
+    const count = await Order.countDocuments()
     const orderNumber =
       ORDERCURRENTBRAND + (parseInt(ORDERCURRENTAMOUNT) + (count + 1));
 
