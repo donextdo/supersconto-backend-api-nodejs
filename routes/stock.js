@@ -5,10 +5,13 @@ const router = express.Router()
 const { 
     getAllStocks,
     filterByShop,
-    filterByCity
+    filterByCity,
+    filterByVendor
  } = require('../controllers/stock')
 
 router.get('/', getAllStocks)
+
+router.get('/filter-by-vendor/:id', filterByVendor)
 
 router.post('/filter-by-shop', filterByShop)
 

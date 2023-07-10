@@ -1,4 +1,5 @@
 const Shop = require("../models/shop");
+const mongoose = require("mongoose");
 
 const getAllShops = async (req, res) => {
   try {
@@ -53,6 +54,33 @@ const getShop = async (req, res) => {
 
     res.status(200).json(shop);
   } catch (error) {
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+const getShopByVendor = async (req, res) => {
+  try {
+    const shop = await Shop.find({vendor:new mongoose.Types.ObjectId(req.params.id)}).populate({
+      path: "catelog_books",
+      populate: {
+        path: "pages",
+        model: "CatelogBookPage",
+        populate: {
+          path: "items",
+          model: "CatelogBookPageItem",
+        },
+      },
+    });
+
+    if (!shop) {
+      return res
+        .status(404)
+        .json({ msg: `No Shop associate with ${req.params.id}` });
+    }
+
+    res.status(200).json(shop);
+  } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Internal Server error" });
   }
 };
@@ -130,4 +158,5 @@ module.exports = {
   updateShop,
   deleteShop,
   countDocuments,
+  getShopByVendor
 };
