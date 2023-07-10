@@ -103,7 +103,7 @@ const socialLoginAll = async (req, res, next) => {
 
             if (registeredUser) {
                 const token = auth.sign({_id: registeredUser.id}, 'myprivatekey');
-                return res.status(200).send({...registeredUser, token});
+                return res.status(200).send({...registeredUser._doc, token});
             }
 
         }

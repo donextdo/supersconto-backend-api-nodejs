@@ -33,14 +33,14 @@ router.post('/send-email', upload.single('pdf'), (req, res) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail', // e.g., 'gmail'
         auth: {
-            user: 'supersconto24g@gmail.com',
-            pass: 'supersconto24g1234',
+            user: 'donextweb@gmail.com',
+            pass: 'nnpyrrlvmbkismus',
         },
     });
 
     // Create the email message
     const mailOptions = {
-        from: 'your-email@example.com',
+        from: 'donextweb@gmail.com',
         to: req.body.email,
         subject: 'Shopping List PDF',
         text: 'Attached is the shopping list PDF.',
