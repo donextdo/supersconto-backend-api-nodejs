@@ -9,7 +9,9 @@ const {
   updateShop,
   deleteShop,
   countDocuments,
+  getShopByVendor
 } = require("../controllers/shop");
+const {AuthenticatedVendorMiddleware} = require("../middleware/authentication");
 
 const uploadOptions = multer({ storage: storage });
 
@@ -18,6 +20,8 @@ const router = express.Router();
 router.get("/", getAllShops);
 
 router.get("/find/:id", getShop);
+
+router.get("/by-vendor/:id", AuthenticatedVendorMiddleware, getShopByVendor);
 
 router.post("/", uploadOptions.single("logo_img"), createShop);
 

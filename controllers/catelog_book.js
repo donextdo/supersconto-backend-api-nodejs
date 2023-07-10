@@ -156,6 +156,7 @@ const createCatelogBook = async (req, res) => {
 
     res.status(201).json(CatelogBook);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Internal Server error" });
   }
 };
@@ -169,6 +170,30 @@ const getCatelogBook = async (req, res) => {
         model: "CatelogBookPageItem",
       },
     });
+
+    if (!catelogBook) {
+      return res
+        .status(404)
+        .json({ msg: `No CatelogBook associate with ${req.params.id}` });
+    }
+
+    res.status(200).json(catelogBook);
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+const getCatelogBookByVendor = async (req, res) => {
+  try {
+
+    const shops = await Shop.find({vendor: req.params.id}).lean()
+    const catelogBook = await CatelogBook.find({ shop_id: { $in: shops.map(a => a._id) } }).populate([{
+      path: "pages",
+      populate: {
+        path: "items",
+        model: "CatelogBookPageItem",
+      },
+    },{path: "shop_id", select:'_id, shop_name'}]);
 
     if (!catelogBook) {
       return res
@@ -244,4 +269,5 @@ module.exports = {
   updateCatelogBook,
   deleteCatelogBook,
   countDocuments,
+  getCatelogBookByVendor
 };

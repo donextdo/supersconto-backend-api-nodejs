@@ -1,18 +1,19 @@
 const express = require('express')
 
-const { 
-    getAllCatelogBook, 
-    createCatelogBook, 
-    getCatelogBook, 
-    updateCatelogBook, 
-    deleteCatelogBook, 
-    countDocuments 
+const {
+    getAllCatelogBook,
+    createCatelogBook,
+    getCatelogBook,
+    updateCatelogBook,
+    deleteCatelogBook,
+    countDocuments,
+    getCatelogBookByVendor
 } = require('../controllers/catelog_book')
 
 const FILE_TYPE_MAP = {
-    'image/png' : 'png',
-    'image/jpeg' : 'jpeg',
-    'image/jpg' : 'jpg' 
+    'image/png': 'png',
+    'image/jpeg': 'jpeg',
+    'image/jpg': 'jpg'
 }
 
 const router = express.Router()
@@ -20,6 +21,8 @@ const router = express.Router()
 router.get('/', getAllCatelogBook)
 
 router.get('/find/:id', getCatelogBook)
+
+router.get('/by-vendor/:id', getCatelogBookByVendor)
 
 router.post('/', createCatelogBook)
 
