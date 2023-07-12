@@ -2,8 +2,10 @@ const Roles = require("../models/constants/roles");
 const User = require("../models/user");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
-const {createToken} = require('../utils/token')
+const { createToken } = require('../utils/token')
 const auth = require("jsonwebtoken");
+const { v4: uuidv4 } = require("uuid");
+const Token = require("../models/token")
 
 const loginAll = async (req, res, next) => {
     passport.authenticate(
@@ -11,32 +13,32 @@ const loginAll = async (req, res, next) => {
         async (err, user, info) => {
             try {
                 if (err || !user) {
-                    return res.status(401).json({message: info?.message,})
+                    return res.status(401).json({ message: info?.message, })
                 }
                 req.login(
                     user,
-                    {session: false},
+                    { session: false },
                     async (error) => {
                         if (error) {
-                            return res.status(500).json({message: 'error login user'})
+                            return res.status(500).json({ message: 'error login user' })
                         }
-                        const {password, ...userData} = user._doc
+                        const { password, ...userData } = user._doc
 
-                        const body = {_id: user._id, email: userData.email, role: userData.userType};
+                        const body = { _id: user._id, email: userData.email, role: userData.userType };
                         const token = createToken(body)
 
-                        return res.json({token, user: userData});
+                        return res.json({ token, user: userData });
                     }
                 );
             } catch (error) {
-                return res.status(401).json({message: 'error login user'})
+                return res.status(401).json({ message: 'error login user' })
             }
         }
     )(req, res, next);
 }
 
 const signupAll = async (req, res, next) => {
-    passport.authenticate('signup', {session: false}, function (err, user, info) {
+    passport.authenticate('signup', { session: false }, function (err, user, info) {
 
         if (err || !user) {
             console.log(err)
@@ -57,7 +59,7 @@ const signupAll = async (req, res, next) => {
                 info
             });
         }
-        const {password, ...userInfo} = user.toObject()
+        const { password, ...userInfo } = user.toObject()
         return res.json({
             isRegistered: true,
             userInfo
@@ -86,12 +88,12 @@ const getAuthUser = async (req, res, next) => {
 
 const socialLoginAll = async (req, res, next) => {
     try {
-        const {email, fullName, picture, role} = req.body
+        const { email, fullName, picture, role } = req.body
 
-        const user = await User.findOne({email}).select("-password").lean();
+        const user = await User.findOne({ email }).select("-password").lean();
         if (user) {
-            const token = auth.sign({_id: user.id}, 'myprivatekey');
-            return res.status(200).send({...user, token});
+            const token = auth.sign({ _id: user.id }, 'myprivatekey');
+            return res.status(200).send({ ...user, token });
         } else {
             const nameArr = fullName.split(" ")
 
@@ -102,15 +104,40 @@ const socialLoginAll = async (req, res, next) => {
             });
 
             if (registeredUser) {
-                const token = auth.sign({_id: registeredUser.id}, 'myprivatekey');
-                return res.status(200).send({...registeredUser._doc, token});
+                const token = auth.sign({ _id: registeredUser.id }, 'myprivatekey');
+                return res.status(200).send({ ...registeredUser._doc, token });
             }
 
         }
     } catch (e) {
         console.log(e)
-        return res.status(500).send({message: "Internal server error"});
+        return res.status(500).send({ message: "Internal server error" });
     }
 }
 
-module.exports = {loginAll, signupAll, getAuthUser, socialLoginAll}
+const forgetPassword = async (req, res, next) => {
+    try {
+        const { email } = req.body
+        const user = await User.findOne({ email })
+
+        if (!user) {
+            return res.status(400).send("Invalid email");
+        } else {
+            let token = await Token.findOne({ userId: user._id })
+            if (token) await token.deleteOne()
+            const body = { _id: user._id, email: user.email, role: 2 };
+            const newToken = createToken(body)
+            await Token.create({
+                userId: user._id,
+                token: newToken,
+                role: 2,
+                createdAt: Date.now()
+            })
+
+        }
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
+module.exports = { loginAll, signupAll, getAuthUser, socialLoginAll, forgetPassword }
