@@ -35,6 +35,10 @@ const CatelogBookSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    flyer: {
+        type: Boolean,
+        default: false
+    },
 
     pages: [{
         type: mongoose.Schema.Types.ObjectId,

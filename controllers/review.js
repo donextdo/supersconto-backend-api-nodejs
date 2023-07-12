@@ -6,6 +6,50 @@ const User = require("../models/user");
 
 
 const addReview = async (req, res) => {
+  // console.log("aaaa")
+
+  // const productId = req.body.productId;
+  // const userId = req.body.userId;
+  // const name = req.body.name;
+  // const email = req.body.email;
+  // const rating = req.body.rating;
+  // const title = req.body.title;
+  // const body = req.body.body;
+  // const submittedDate = req.body.submittedDate;
+  // const verifiedPurchase = req.body.verifiedPurchase;
+  // const imagesOrVideos = req.body.imagesOrVideos;
+
+  // const reviewStatus = req.body.reviewStatus;
+  // const isHelpfulFeedback = req.body.isHelpfulFeedback;
+
+  // const review = {
+  //   productId,
+  //   userId,
+  //   name,
+  //   email,
+  //   rating,
+  //   title,
+  //   body,
+  //   submittedDate,
+  //   verifiedPurchase,
+  //   imagesOrVideos,
+  //   reviewStatus,
+  //   isHelpfulFeedback,
+  // };
+  // try {
+
+  //   let response = await Review.create(review);
+  //   console.log(response)
+  //   if (response) {
+  //     return res.status(201).send({ message: "New Review Inserted" });
+  //   } else {
+      
+  //     return res.status(500).send({ message: "Internal server error" });
+  //   }
+  // } catch (err) {
+  //   console.log(err);
+  //   return res.status(400).send({ message: "Error while saving review" });
+  // }
   const productId = req.body.productId;
   const userId = req.body.userId;
   const name = req.body.name;
@@ -35,21 +79,6 @@ const addReview = async (req, res) => {
     isHelpfulFeedback,
   });
   try {
-    const token = req.headers.authorization;
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    // Verify and decode the token
-    const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
-    const userEmail = decodedToken.data;
-
-    // Find the user based on the email
-     let user = await User.findOne({ email: userEmail });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
     
     let response = await review.save();
     if (response) {
