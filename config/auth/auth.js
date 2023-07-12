@@ -30,6 +30,7 @@ passport.use(
                 return done(null, user);
 
             } catch (error) {
+                console.log(error)
                 done(error);
             }
         }
@@ -78,6 +79,7 @@ passport.use(
 
                 return done(null, user, {message: 'Logged in Successfully', status: 200});
             } catch (error) {
+                console.log(error)
                 return done(error);
             }
         }

@@ -11,6 +11,7 @@ const loginAll = async (req, res, next) => {
         async (err, user, info) => {
             try {
                 if (err || !user) {
+                    console.log(err);
                     return res.status(401).json({message: info?.message,})
                 }
                 req.login(
@@ -18,6 +19,7 @@ const loginAll = async (req, res, next) => {
                     {session: false},
                     async (error) => {
                         if (error) {
+                            console.log(error)
                             return res.status(500).json({message: 'error login user'})
                         }
                         const {password, ...userData} = user._doc
@@ -25,10 +27,11 @@ const loginAll = async (req, res, next) => {
                         const body = {_id: user._id, email: userData.email, role: userData.userType};
                         const token = createToken(body)
 
-                        return res.json({token, user: userData});
+                        return res.json({token, ...userData});
                     }
                 );
             } catch (error) {
+                console.log(error)
                 return res.status(401).json({message: 'error login user'})
             }
         }
@@ -90,7 +93,7 @@ const socialLoginAll = async (req, res, next) => {
 
         const user = await User.findOne({email}).select("-password").lean();
         if (user) {
-            const token = auth.sign({_id: user.id}, 'myprivatekey');
+            const token = createToken({_id: user._id, email: user.email, role: Roles.CUSTOMER});
             return res.status(200).send({...user, token});
         } else {
             const nameArr = fullName.split(" ")
@@ -102,7 +105,7 @@ const socialLoginAll = async (req, res, next) => {
             });
 
             if (registeredUser) {
-                const token = auth.sign({_id: registeredUser.id}, 'myprivatekey');
+                const token = createToken({_id: registeredUser._id, email: registeredUser.email, role: Roles.CUSTOMER});
                 return res.status(200).send({...registeredUser._doc, token});
             }
 
