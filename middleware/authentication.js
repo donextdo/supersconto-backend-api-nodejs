@@ -1,5 +1,5 @@
 const { verifyToken } = require('../utils/token')
-const Customer = require('../models/customer')
+const User = require('../models/user')
 const Admin = require('../models/admin')
 const Vendor = require('../models/vendor')
 const roles = require('../models/constants/roles')
@@ -33,7 +33,7 @@ const AuthenticatedMiddleware = async (req, res, next) => {
             user = await Vendor.findById(payload.user._id)
         }
         else {
-            user = await Customer.findById(payload.user._id)
+            user = await User.findById(payload.user._id)
         }
 
         if (!user) {

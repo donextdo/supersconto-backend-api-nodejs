@@ -9,7 +9,7 @@ const tokenSchema = new Schema({
     role: {
         type: String,
         required: true,
-        enum: ['Vendor', 'Admin']
+        enum: ['Vendor', 'Admin', 'User']
     },
     token: {
         type: String,

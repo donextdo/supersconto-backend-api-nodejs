@@ -13,25 +13,28 @@ const loginAll = async (req, res, next) => {
         async (err, user, info) => {
             try {
                 if (err || !user) {
-                    return res.status(401).json({ message: info?.message, })
+                    console.log(err);
+                    return res.status(401).json({message: info?.message,})
                 }
                 req.login(
                     user,
                     { session: false },
                     async (error) => {
                         if (error) {
-                            return res.status(500).json({ message: 'error login user' })
+                            console.log(error)
+                            return res.status(500).json({message: 'error login user'})
                         }
                         const { password, ...userData } = user._doc
 
                         const body = { _id: user._id, email: userData.email, role: userData.userType };
                         const token = createToken(body)
 
-                        return res.json({ token, user: userData });
+                        return res.json({token, ...userData});
                     }
                 );
             } catch (error) {
-                return res.status(401).json({ message: 'error login user' })
+                console.log(error)
+                return res.status(401).json({message: 'error login user'})
             }
         }
     )(req, res, next);
@@ -92,8 +95,8 @@ const socialLoginAll = async (req, res, next) => {
 
         const user = await User.findOne({ email }).select("-password").lean();
         if (user) {
-            const token = auth.sign({ _id: user.id }, 'myprivatekey');
-            return res.status(200).send({ ...user, token });
+            const token = createToken({_id: user._id, email: user.email, role: Roles.CUSTOMER});
+            return res.status(200).send({...user, token});
         } else {
             const nameArr = fullName.split(" ")
 
@@ -104,8 +107,8 @@ const socialLoginAll = async (req, res, next) => {
             });
 
             if (registeredUser) {
-                const token = auth.sign({ _id: registeredUser.id }, 'myprivatekey');
-                return res.status(200).send({ ...registeredUser._doc, token });
+                const token = createToken({_id: registeredUser._id, email: registeredUser.email, role: Roles.CUSTOMER});
+                return res.status(200).send({...registeredUser._doc, token});
             }
 
         }
@@ -125,15 +128,14 @@ const forgetPassword = async (req, res, next) => {
         } else {
             let token = await Token.findOne({ userId: user._id })
             if (token) await token.deleteOne()
-            const body = { _id: user._id, email: user.email, role: 2 };
-            const newToken = createToken(body)
+            const uuid = uuidv4();
             await Token.create({
                 userId: user._id,
-                token: newToken,
+                token: uuid,
                 role: 2,
                 createdAt: Date.now()
             })
-
+            const url= `${process.env.NEXT_URL}/verify-password/${uuid}`
         }
     } catch (error) {
         res.status(500).json(error.message)
