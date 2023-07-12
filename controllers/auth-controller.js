@@ -167,11 +167,16 @@ const verifyPassword = async (req, res, next) => {
         if(!user){
             return res.status(400).send("user not found");
         } else {
-            const checkToken = await Token.findOne({token: token})
+            const checkToken = await Token.findOne({userId: userId})
             if (!checkToken){
             return res.status(400).send("token not found");
             } else {
-
+                if (checkToken==token){
+                    res.json({isverify: true});
+                }else{
+                    res.json({isverify: false});
+                    
+                }
             }
         }
 
