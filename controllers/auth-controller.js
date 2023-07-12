@@ -136,7 +136,7 @@ const forgetPassword = async (req, res, next) => {
                 role: "User",
                 createdAt: Date.now()
             })
-            const url = `${process.env.NEXT_URL}/verify-password/${uuid}`
+            const url = `${process.env.NEXT_URL}/verify-password?t=${uuid}&u=${user._id}`
             const mailOptions = {
                 to: email,
                 subject: 'Forgot Password',
