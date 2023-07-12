@@ -159,4 +159,25 @@ const forgetPassword = async (req, res, next) => {
     }
 }
 
-module.exports = {loginAll, signupAll, getAuthUser, socialLoginAll, forgetPassword}
+const verifyPassword = async (req, res, next) => {
+    try {
+        const {token, userId} = req.body
+
+        const user = await User.findOne({userId})
+        if(!user){
+            return res.status(400).send("user not found");
+        } else {
+            const checkToken = await Token.findOne({token: token})
+            if (!checkToken){
+            return res.status(400).send("token not found");
+            } else {
+
+            }
+        }
+
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
+module.exports = {loginAll, signupAll, getAuthUser, socialLoginAll, forgetPassword, verifyPassword}
