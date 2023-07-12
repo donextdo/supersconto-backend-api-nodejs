@@ -4,6 +4,7 @@ const Product = require("../models/product");
 const Catalog_page_item = require("../models/catalog_page_item");
 const axios = require("axios");
 const CatelogBookPageItem = require("../models/catalog_page_item");
+const sendEmail = require("../config/nodemailer/nodemailer");
 let ORDERCURRENTBRAND = "BT";
 let ORDERCURRENTAMOUNT = 1000;
 
@@ -317,6 +318,33 @@ const getOrderById = async (req, res) => {
   }
 };
 
+const emailCartItems = async (req, res, next) => {
+  const {originalname, buffer} = req.file;
+
+  const mailOptions = {
+    to: req.body.email,
+    subject: 'Shopping List PDF',
+    text: 'Attached is the shopping list PDF.',
+    attachments: [
+      {
+        filename: originalname,
+        content: buffer,
+      },
+    ],
+  };
+
+  sendEmail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+      res.status(500).json({error: 'Failed to send email'});
+    } else {
+      console.log('Email sent:', info.response);
+      res.json({message: 'Email sent successfully'});
+    }
+
+  })
+}
+
 module.exports = {
   createOrder,
   getAllOrders,
@@ -324,4 +352,5 @@ module.exports = {
   updateOrder,
   deleteOrder,
   getOrderByUser,
+  emailCartItems
 };
