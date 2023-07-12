@@ -7,6 +7,7 @@ const auth = require("jsonwebtoken");
 const {v4: uuidv4} = require("uuid");
 const Token = require("../models/token")
 const sendEmail = require("../config/nodemailer/nodemailer");
+const bcrypt = require("bcrypt");
 
 const loginAll = async (req, res, next) => {
     passport.authenticate(
@@ -163,19 +164,19 @@ const verifyPassword = async (req, res, next) => {
     try {
         const {token, userId} = req.body
 
-        const user = await User.findOne({userId})
-        if(!user){
+        const user = await User.findById(userId)
+        if (!user) {
             return res.status(400).send("user not found");
         } else {
             const checkToken = await Token.findOne({userId: userId})
-            if (!checkToken){
-            return res.status(400).send("token not found");
+            if (!checkToken) {
+                return res.status(400).send("token not found");
             } else {
-                if (checkToken==token){
-                    res.json({isverify: true});
-                }else{
-                    res.json({isverify: false});
-                    
+                if (checkToken.token === token) {
+                    res.json({isVerify: true});
+                } else {
+                    res.json({isVerify: false});
+
                 }
             }
         }
@@ -185,4 +186,31 @@ const verifyPassword = async (req, res, next) => {
     }
 }
 
-module.exports = {loginAll, signupAll, getAuthUser, socialLoginAll, forgetPassword, verifyPassword}
+const updatePassword = async (req, res, next) => {
+    try {
+        const {token, userId, newPassword} = req.body
+
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(400).send("user not found");
+        } else {
+            const checkToken = await Token.findOne({userId: userId})
+            if (!checkToken) {
+                return res.status(400).send("token not found");
+            } else {
+                if (checkToken.token === token) {
+                    await User.updateOne({_id: user._id}, {password: await bcrypt.hash(newPassword, 10)})
+                    await checkToken.deleteOne()
+                    return res.json({isUpdated: true});
+                } else {
+                    return res.json({isUpdated: false});
+                }
+            }
+        }
+
+    } catch (error) {
+        return res.status(500).json(error.message)
+    }
+}
+
+module.exports = {loginAll, signupAll, getAuthUser, socialLoginAll, forgetPassword, verifyPassword, updatePassword}
