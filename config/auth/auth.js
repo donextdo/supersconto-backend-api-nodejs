@@ -1,9 +1,10 @@
 const passport = require('passport');
 const Roles = require("../../models/constants/roles");
-const CustomerModel = require('../../models/customer')
+const User = require('../../models/user')
 const AdminModel = require('../../models/admin')
 const VendorModel = require('../../models/vendor')
 const localStrategy = require('passport-local').Strategy;
+
 
 passport.use(
     'signup',
@@ -24,7 +25,7 @@ passport.use(
                 } else if (userData.userType === Roles.VENDOR) {
                     user = await VendorModel.create(userData);
                 } else if (userData.userType === Roles.CUSTOMER) {
-                    user = await CustomerModel.create(userData);
+                    user = await User.create(userData);
                 }
                 return done(null, user);
 
@@ -45,6 +46,7 @@ passport.use(
         },
         async (req, email, password, done) => {
             try {
+                console.log(email,password)
                 let user
                 if (req.body.role === Roles.ADMIN) {
                     user = await AdminModel.findOne({email});
@@ -59,7 +61,7 @@ passport.use(
                     }
 
                 } else if (req.body.role === Roles.CUSTOMER) {
-                    user = await CustomerModel.findOne({email})
+                    user = await User.findOne({email})
                     if (!user) {
                         return done(null, false, {message: 'User not found', status: 404});
                     }

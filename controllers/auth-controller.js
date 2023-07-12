@@ -41,7 +41,7 @@ const signupAll = async (req, res, next) => {
         if (err || !user) {
             console.log(err)
             console.log(user)
-            if (err.code && err.code === 11000) {
+            if (err?.code && err?.code === 11000) {
                 return res.status(400).json({
                     isRegistered: false,
                     duplicate: Object.keys(err.keyValue),
