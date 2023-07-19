@@ -37,6 +37,78 @@ const createSubCategory = async (req, res) => {
   }
 };
 
+const createSubCategoryLevelTwo = async (req, res) => {
+  try {
+    const { name, mainCategoryName } = req.body;
+    let mainCategoryId = null;
+    if (mainCategoryName) {
+      const existingMainCategory = await SubCategory.findOne({
+        name: mainCategoryName,
+      });
+      if (existingMainCategory) {
+        mainCategoryId = existingMainCategory._id;
+      }
+    }
+    const subCategoryLevelTwo = new SubcategoryLevelTwo({
+      name,
+      mainCategoryId,
+    });
+    await subCategoryLevelTwo.save();
+    res.status(201).json(subCategoryLevelTwo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+const createSubCategoryLevelThree = async (req, res) => {
+  try {
+    const { name, mainCategoryName } = req.body;
+    let mainCategoryId = null;
+    if (mainCategoryName) {
+      const existingMainCategory = await SubcategoryLevelTwo.findOne({
+        name: mainCategoryName,
+      });
+      if (existingMainCategory) {
+        mainCategoryId = existingMainCategory._id;
+      }
+    }
+    const subCategoryLevelThree = new SubcategoryLevelThree({
+      name,
+      mainCategoryId,
+    });
+    await subCategoryLevelThree.save();
+    res.status(201).json(subCategoryLevelThree);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+const createSubCategoryLevelFour = async (req, res) => {
+  try {
+    const { name, mainCategoryName } = req.body;
+    let mainCategoryId = null;
+    if (mainCategoryName) {
+      const existingMainCategory = await SubcategoryLevelThree.findOne({
+        name: mainCategoryName,
+      });
+      if (existingMainCategory) {
+        mainCategoryId = existingMainCategory._id;
+      }
+    }
+    const subCategoryLevelFour = new SubcategoryLevelFour({
+      name,
+      mainCategoryId,
+    });
+    await subCategoryLevelFour.save();
+    res.status(201).json(subCategoryLevelFour);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
 const getAllCategories = async (req, res) => {
   try {
     const subCategoriesLevelFour = await SubcategoryLevelFour.find();
@@ -130,70 +202,89 @@ const getSubCategoryLevelFourById = async (req, res) => {
 const getSubCategoryByMainCategoryId = async (req, res) => {
   try {
     const { mainCategoryId } = req.params;
-    console.log("mainCategoryId : ", mainCategoryId);
-    const subCategory = await SubCategory.find({
+    console.log("mainCategoryId: ", mainCategoryId);
+
+    let subCategories = await SubCategory.find({
       mainCategoryId: mainCategoryId,
     });
-    if (!subCategory) {
-      return res.status(404).json({ message: "Sub category not found" });
+
+    if (!subCategories || subCategories.length === 0) {
+      subCategories = await SubcategoryLevelTwo.find({
+        mainCategoryId: mainCategoryId,
+      });
+
+      if (!subCategories || subCategories.length === 0) {
+        subCategories = await SubcategoryLevelThree.find({
+          mainCategoryId: mainCategoryId,
+        });
+        if (!subCategories || subCategories.length === 0) {
+          subCategories = await SubcategoryLevelFour.find({
+            mainCategoryId: mainCategoryId,
+          });
+          if (!subCategories || subCategories.length === 0) {
+            return res.status(404).json({ message: "Subcategories not found" });
+          }
+        }
+      }
     }
-    res.status(200).json(subCategory);
+
+    res.status(200).json(subCategories);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server error" });
   }
 };
 
-const getSubCategoryLevelTwoBySubCategoryId = async (req, res) => {
-  try {
-    const { mainCategoryId } = req.params;
-    console.log("mainCategoryId : ", mainCategoryId);
-    const subCategory = await SubcategoryLevelTwo.find({
-      mainCategoryId: mainCategoryId,
-    });
-    if (!subCategory) {
-      return res.status(404).json({ message: "Sub category not found" });
-    }
-    res.status(200).json(subCategory);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server error" });
-  }
-};
+// const getSubCategoryLevelTwoBySubCategoryId = async (req, res) => {
+//   try {
+//     const { mainCategoryId } = req.params;
+//     console.log("mainCategoryId : ", mainCategoryId);
+//     const subCategory = await SubcategoryLevelTwo.find({
+//       mainCategoryId: mainCategoryId,
+//     });
+//     if (!subCategory) {
+//       return res.status(404).json({ message: "Sub category not found" });
+//     }
+//     res.status(200).json(subCategory);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal Server error" });
+//   }
+// };
 
-const getSubCategoryLevelThreeBySubCategoryId = async (req, res) => {
-  try {
-    const { mainCategoryId } = req.params;
-    console.log("mainCategoryId : ", mainCategoryId);
-    const subCategory = await SubcategoryLevelThree.find({
-      mainCategoryId: mainCategoryId,
-    });
-    if (!subCategory) {
-      return res.status(404).json({ message: "Sub category not found" });
-    }
-    res.status(200).json(subCategory);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server error" });
-  }
-};
+// const getSubCategoryLevelThreeBySubCategoryId = async (req, res) => {
+//   try {
+//     const { mainCategoryId } = req.params;
+//     console.log("mainCategoryId : ", mainCategoryId);
+//     const subCategory = await SubcategoryLevelThree.find({
+//       mainCategoryId: mainCategoryId,
+//     });
+//     if (!subCategory) {
+//       return res.status(404).json({ message: "Sub category not found" });
+//     }
+//     res.status(200).json(subCategory);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal Server error" });
+//   }
+// };
 
-const getSubCategoryLevelFourBySubCategoryId = async (req, res) => {
-  try {
-    const { mainCategoryId } = req.params;
-    console.log("mainCategoryId : ", mainCategoryId);
-    const subCategory = await SubcategoryLevelFour.find({
-      mainCategoryId: mainCategoryId,
-    });
-    if (!subCategory) {
-      return res.status(404).json({ message: "Sub category not found" });
-    }
-    res.status(200).json(subCategory);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server error" });
-  }
-};
+// const getSubCategoryLevelFourBySubCategoryId = async (req, res) => {
+//   try {
+//     const { mainCategoryId } = req.params;
+//     console.log("mainCategoryId : ", mainCategoryId);
+//     const subCategory = await SubcategoryLevelFour.find({
+//       mainCategoryId: mainCategoryId,
+//     });
+//     if (!subCategory) {
+//       return res.status(404).json({ message: "Sub category not found" });
+//     }
+//     res.status(200).json(subCategory);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal Server error" });
+//   }
+// };
 
 const updateCategory = async (req, res) => {
   try {
@@ -263,77 +354,6 @@ const deleteCategory = async (req, res) => {
   }
 };
 
-const createSubCategoryLevelTwo = async (req, res) => {
-  try {
-    const { name, mainCategoryName } = req.body;
-    let mainCategoryId = null;
-    if (mainCategoryName) {
-      const existingMainCategory = await SubCategory.findOne({
-        name: mainCategoryName,
-      });
-      if (existingMainCategory) {
-        mainCategoryId = existingMainCategory._id;
-      }
-    }
-    const subCategoryLevelTwo = new SubcategoryLevelTwo({
-      name,
-      mainCategoryId,
-    });
-    await subCategoryLevelTwo.save();
-    res.status(201).json(subCategoryLevelTwo);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server error" });
-  }
-};
-
-const createSubCategoryLevelThree = async (req, res) => {
-  try {
-    const { name, mainCategoryName } = req.body;
-    let mainCategoryId = null;
-    if (mainCategoryName) {
-      const existingMainCategory = await SubcategoryLevelTwo.findOne({
-        name: mainCategoryName,
-      });
-      if (existingMainCategory) {
-        mainCategoryId = existingMainCategory._id;
-      }
-    }
-    const subCategoryLevelThree = new SubcategoryLevelThree({
-      name,
-      mainCategoryId,
-    });
-    await subCategoryLevelThree.save();
-    res.status(201).json(subCategoryLevelThree);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server error" });
-  }
-};
-
-const createSubCategoryLevelFour = async (req, res) => {
-  try {
-    const { name, mainCategoryName } = req.body;
-    let mainCategoryId = null;
-    if (mainCategoryName) {
-      const existingMainCategory = await SubcategoryLevelThree.findOne({
-        name: mainCategoryName,
-      });
-      if (existingMainCategory) {
-        mainCategoryId = existingMainCategory._id;
-      }
-    }
-    const subCategoryLevelFour = new SubcategoryLevelFour({
-      name,
-      mainCategoryId,
-    });
-    await subCategoryLevelFour.save();
-    res.status(201).json(subCategoryLevelFour);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server error" });
-  }
-};
 module.exports = {
   createMainCategory,
   createSubCategory,
@@ -349,7 +369,7 @@ module.exports = {
   getSubCategoryLevelThreeById,
   getSubCategoryLevelFourById,
   getSubCategoryByMainCategoryId,
-  getSubCategoryLevelTwoBySubCategoryId,
-  getSubCategoryLevelThreeBySubCategoryId,
-  getSubCategoryLevelFourBySubCategoryId,
+  // getSubCategoryLevelTwoBySubCategoryId,
+  // getSubCategoryLevelThreeBySubCategoryId,
+  // getSubCategoryLevelFourBySubCategoryId,
 };

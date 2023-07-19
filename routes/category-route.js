@@ -37,16 +37,16 @@ router.get(
   "/:mainCategoryId",
   categoryController.getSubCategoryByMainCategoryId
 );
-router.get(
-  "/subcategoryltwo/:mainCategoryId",
-  categoryController.getSubCategoryLevelTwoBySubCategoryId
-);
-router.get(
-  "/subcategorylthree/:mainCategoryId",
-  categoryController.getSubCategoryLevelThreeBySubCategoryId
-);
-router.get(
-  "/subcategorylfour/:mainCategoryId",
-  categoryController.getSubCategoryLevelFourBySubCategoryId
-);
+// router.get(
+//   "/subcategoryltwo/:mainCategoryId",
+//   categoryController.getSubCategoryLevelTwoBySubCategoryId
+// );
+// router.get(
+//   "/subcategorylthree/:mainCategoryId",
+//   categoryController.getSubCategoryLevelThreeBySubCategoryId
+// );
+// router.get(
+//   "/subcategorylfour/:mainCategoryId",
+//   categoryController.getSubCategoryLevelFourBySubCategoryId
+// );
 module.exports = router;
