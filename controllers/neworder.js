@@ -279,6 +279,7 @@ const getOrderById = async (req, res) => {
         description: product.description,
         price: product.unit_price,
         front: product.product_image,
+        discount: product.discount,
       };
     });
 

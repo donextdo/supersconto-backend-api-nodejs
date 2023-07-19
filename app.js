@@ -145,7 +145,7 @@ io.on("connection", (socket) => {
     console.log("A client disconnected.");
   });
 });
-const port = 5000;
+const port = 9000;
 server.listen(port, () => {
   console.log(`Server listening on port ${port}.`);
 });
