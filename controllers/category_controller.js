@@ -205,7 +205,16 @@ const updateCategory = async (req, res) => {
     if (!category) {
       category = await SubCategory.findById(id);
       if (!category) {
-        return res.status(404).json({ message: "Category not found" });
+        category = await SubcategoryLevelTwo.findById(id);
+        if (!category) {
+          category = await SubcategoryLevelThree.findById(id);
+          if (!category) {
+            category = await SubcategoryLevelFour.findById(id);
+            if (!category) {
+              return res.status(404).json({ message: "Category not found" });
+            }
+          }
+        }
       }
     }
 
@@ -229,7 +238,18 @@ const deleteCategory = async (req, res) => {
     if (!category) {
       category = await SubCategory.findById(id);
       if (!category) {
-        return res.status(404).json({ message: "Category not found" });
+        if (!category) {
+          category = await SubcategoryLevelTwo.findById(id);
+          if (!category) {
+            category = await SubcategoryLevelThree.findById(id);
+            if (!category) {
+              category = await SubcategoryLevelFour.findById(id);
+              if (!category) {
+                return res.status(404).json({ message: "Category not found" });
+              }
+            }
+          }
+        }
       }
     }
 
