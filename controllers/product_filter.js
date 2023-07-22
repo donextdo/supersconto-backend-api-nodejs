@@ -45,11 +45,16 @@ const buildFilterObject = (
     filter.$or = [
       { product_category: categoryId },
       { product_sub_category: categoryId },
+      { product_sub_category_level_two: categoryId },
     ];
   }
   if (subCategories) {
     const subCatArr = subCategories.split(",");
-    filter.product_sub_category = { $in: subCatArr };
+    filter.$or = [
+      { product_sub_category: { $in: subCatArr } },
+      { product_sub_category_level_two: { $in: subCatArr } },
+    ];
+    // filter.product_sub_category = { $in: subCatArr };
   }
 
   if (brands) {

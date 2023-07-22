@@ -31,6 +31,12 @@ const addProduct = async (req, res) => {
   const product_name = req.body.product_name;
   const product_category = req.body.product_category;
   const product_sub_category = req.body.product_sub_category;
+  const product_sub_category_level_two =
+    req.body.product_sub_category_level_two;
+  const product_sub_category_level_three =
+    req.body.product_sub_category_level_three;
+  const product_description_level_four =
+    req.body.product_description_level_four;
   const product_description = req.body.product_description;
   const unit_price = req.body.unit_price;
   const product_image = req.body.product_image;
@@ -42,7 +48,6 @@ const addProduct = async (req, res) => {
     title,
     brand,
     description,
-
     front,
     back,
     side,
@@ -68,6 +73,9 @@ const addProduct = async (req, res) => {
     product_name,
     product_category,
     product_sub_category,
+    product_sub_category_level_two,
+    product_sub_category_level_three,
+    product_description_level_four,
     product_description,
     unit_price,
     product_image,
@@ -135,6 +143,9 @@ const updateProduct = async (req, res) => {
     side: req.body.side,
     category: req.body.category,
     product_sub_category: req.body.product_sub_category,
+    product_sub_category_level_two: req.body.product_sub_category_level_two,
+    product_sub_category_level_three: req.body.product_sub_category_level_three,
+    product_description_level_four: req.body.product_description_level_four,
     quantity: req.body.quantity,
     price: req.body.price,
     isAvailable: req.body.isAvailable,
