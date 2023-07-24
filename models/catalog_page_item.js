@@ -66,6 +66,11 @@ const CatelogBookPageItemSchema = new mongoose.Schema(
       // required: true
     },
 
+    discounted_price: {
+      type: Number,
+      // required: true
+    },
+
     product_image: {
       //croped image
       type: String,

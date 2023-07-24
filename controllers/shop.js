@@ -91,13 +91,14 @@ const updateShop = async (req, res) => {
 
     const sshop = await Shop.findById(id);
 
+
     if (!sshop) {
       return res.status(404).json({
         Success: false,
         message: `Cannot find shop with given id`,
       });
     }
-
+ 
     const file = req.file;
 
     let logo_img = Shop.logo_img;
@@ -122,6 +123,7 @@ const updateShop = async (req, res) => {
 
     res.status(200).json(updatedShop);
   } catch (error) {
+    console.log(error)
     res.status(500).json(error.message);
   }
 };
@@ -138,6 +140,7 @@ const deleteShop = async (req, res) => {
 
     res.status(200).json({ msg: "Successfully delete shop" });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Internal Server error" });
   }
 };

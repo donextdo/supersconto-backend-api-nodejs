@@ -39,7 +39,10 @@ const CatelogBookSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-
+    active: {
+        type: Boolean,
+        default: false
+    },
     pages: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'CatelogBookPage'

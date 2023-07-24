@@ -38,6 +38,10 @@ const ShopSchema = new mongoose.Schema(
             type: String,
             // required: true,
         },
+        customized_shop_name: {
+            type: String,
+            
+        },
 
         vendor: {
             type: Schema.Types.ObjectId,
