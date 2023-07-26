@@ -82,7 +82,7 @@ const getCatelogBookPageItemByIds = async (req, res) => {
     console.log(req.body.items )
     const catelogBookPageItem = await CatelogBookPageItem.find({
       _id: { $in: req.body.items },
-    }).populate("shop_id");
+    }).populate(["shop_id", "catelog_book_id"]);
     if (!catelogBookPageItem) {
       return res.status(404).json({
         message: `No catelog Book Page Item associate with ${req.params.is}`,

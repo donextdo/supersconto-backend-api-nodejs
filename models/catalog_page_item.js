@@ -8,15 +8,15 @@ const CatelogBookPageItemSchema = new mongoose.Schema(
       // required: true
     },
 
-    // catelog_book_id: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'CatelogBook',
-    //     // required: true
-    // },
+    catelog_book_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CatelogBook',
+        // required: true
+    },
 
     catelog_page_id: {
-      type: String,
-      // ref: 'CatelogBookPage',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'CatelogBookPage',
       // required: true
     },
 
