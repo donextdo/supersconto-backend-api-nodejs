@@ -39,8 +39,13 @@ const ShopSchema = new mongoose.Schema(
             // required: true,
         },
         customized_shop_name: {
-            type: String,
-            
+            type: String,    
+        },
+        website: {
+            type: String,     
+        },
+        city: {
+            type: String,     
         },
 
         vendor: {

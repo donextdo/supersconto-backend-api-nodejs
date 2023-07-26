@@ -116,7 +116,7 @@ const getAllCatelogBook = async (req, res) => {
         .map((shop) => {
           return shop.books.map((book) => ({
             ...book,
-            shop_id: { shop_name: shop.shop_name, distance: shop.distance },
+            shop_id: { shop_name: shop.shop_name, distance: shop.distance},
           }));
         })
         .flatMap((a) => a);
