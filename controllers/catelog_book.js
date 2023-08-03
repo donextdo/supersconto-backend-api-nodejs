@@ -95,8 +95,13 @@ const getAllCatelogBook = async (req, res) => {
                     {
                       $project: {
                         page_image: 1,
+                        page_no: 1,
                       },
                     },
+                    {
+                      $sort: { page_no: 1 } // Sort by the createdAt field in ascending order (1)
+                      // For descending order, use { createdAt: -1 }
+                    }
                   ],
                 },
               },
@@ -166,6 +171,9 @@ const getCatelogBook = async (req, res) => {
   try {
     const catelogBook = await CatelogBook.findById(req.params.id).populate({
       path: "pages",
+      options: {
+        sort: { page_no: 1 }
+      },
       populate: {
         path: "items",
         model: "CatelogBookPageItem",
