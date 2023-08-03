@@ -111,9 +111,29 @@ const createSubCategoryLevelFour = async (req, res) => {
 
 const getAllCategories = async (req, res) => {
   try {
-    const subCategoriesLevelFour = await SubcategoryLevelFour.find();
-    const subCategoriesLevelThree = await SubcategoryLevelThree.find();
-    const subCategoriesLevelTwo = await SubcategoryLevelTwo.find();
+    const subCategoriesLevelFour = await SubcategoryLevelFour.find().populate({
+      path: "mainCategoryId",
+      populate: [
+        {
+          path: "mainCategoryId",
+          populate: [
+            { path: "mainCategoryId", populate: [{ path: "mainCategoryId" }] },
+          ],
+        },
+      ],
+    });
+    const subCategoriesLevelThree = await SubcategoryLevelThree.find().populate(
+      {
+        path: "mainCategoryId",
+        populate: [
+          { path: "mainCategoryId", populate: [{ path: "mainCategoryId" }] },
+        ],
+      }
+    );
+    const subCategoriesLevelTwo = await SubcategoryLevelTwo.find().populate({
+      path: "mainCategoryId",
+      populate: [{ path: "mainCategoryId" }],
+    });
     const subCategories = await SubCategory.find();
     const mainCategories = await MainCategory.find();
     res.status(200).json({

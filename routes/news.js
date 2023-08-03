@@ -15,7 +15,7 @@ const uploadOptions = multer({storage: storage})
 
 const router = express.Router()
 
-router.get('/',uploadOptions.single('images'), getAllNews)
+router.get('/', getAllNews)
 
 router.get('/find/:id', getNews)
 

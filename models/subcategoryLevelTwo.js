@@ -6,7 +6,7 @@ const subCategoryLevelTwoSchema = new mongoose.Schema({
     required: true,
   },
   mainCategoryId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "SubCategory",
   },
 });
