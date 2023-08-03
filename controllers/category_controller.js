@@ -137,7 +137,6 @@ const getAllCategories = async (req, res) => {
     });
     const subCategories = await SubCategory.find().populate({
       path: "mainCategoryId",
-      populate: [{ path: "mainCategoryId" }],
     });
     const mainCategories = await MainCategory.find();
     res.status(200).json({
