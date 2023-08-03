@@ -13,55 +13,44 @@ const getAllNews = async (req, res) => {
 };
 
 const createNews = async (req, res) => {
-  // const files = req.files
-  // console.log(files)
-
-  // if(files.length < 1) {
-  //     return res.status(400).send('No Document in request')
-  // }
-
-  // const basePath = `${process.env.IMG_SERVER}/public/images/`
-  // const fileNames = files.map(file => {
-  //     return `${basePath}${file.filename}`
-  // })
-
-  // const {images, ...otherData} = req.body
-
-  // const newNews = new News({...otherData, images: fileNames})
   const file = req.file;
 
-  let img = null;
+  let image = null;
 
   if (file) {
-    img = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
+    image = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
   }
 
   const { images, ...payload } = req.body;
 
   const newNews = new News({
     ...payload,
-    img,
+    image,
   });
+
   try {
     const News = await newNews.save();
     res.status(201).json(News);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Internal Server error" });
   }
 };
 
 const getNews = async (req, res) => {
-  try {
-    const News = await News.findById(req.params.id);
+    console.log("dabdhabdhbdhbawdh")
 
-    if (!News) {
+  try {
+    const oneNew = await News.findById(req.params.id);
+    if (!oneNew) {
       return res
         .status(404)
         .json({ msg: `No News associate with ${req.params.is}` });
     }
 
-    res.status(200).json(News);
+    res.status(200).json(oneNew);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Internal Server error" });
   }
 };

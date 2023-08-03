@@ -10,17 +10,14 @@ const NewsSchema = new mongoose.Schema({
         type: String,
     },
 
-    
-    images: {
-        type: Array,
+    image: {
+        type: String,
         required: true
     },
     status: {
         type: String,
         required: true
     },
-   
-    
 
     created_at: {
         type: Date,
