@@ -110,6 +110,7 @@ const createSubCategoryLevelFour = async (req, res) => {
 };
 
 const getAllCategories = async (req, res) => {
+  
   try {
     const subCategoriesLevelFour = await SubcategoryLevelFour.find().populate({
       path: "mainCategoryId",
