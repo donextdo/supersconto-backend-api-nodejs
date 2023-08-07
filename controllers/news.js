@@ -83,11 +83,9 @@ const updateNews = async (req, res) => {
     }
 
     const file = req.file;
-
-    let images = news.images;
-
+    let image
     if (file) {
-      profilePic = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
+      image = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
     }
 
     const updatedNews = await News.findByIdAndUpdate(
@@ -95,7 +93,7 @@ const updateNews = async (req, res) => {
       {
         $set: {
           ...req.body,
-          images,
+          image,
         },
       },
       {
