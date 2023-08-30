@@ -1,6 +1,8 @@
 const CatelogBook = require("../models/catelog_book");
 const Shop = require("../models/shop");
 
+const ITEMS_PER_PAGE = 10; // Number of items to show per page
+
 const getAllCatelogBook = async (req, res) => {
   const { lat, long, ...filter } = req.query;
 
@@ -147,6 +149,132 @@ const getAllCatelogBook = async (req, res) => {
   }
 };
 
+
+
+const getAllCatelogBookparams = async (req, res) => {
+  const { lat, long, page = 1, entries = ITEMS_PER_PAGE, search = '' } = req.query;
+
+  try {
+    let catelogBooks;
+    let query = {};
+
+    if (lat && long) {
+      // Your existing geoNear aggregation code here
+      const result = await Shop.aggregate([
+        {
+          $geoNear: {
+            near: {
+              type: "Point",
+              coordinates: [Number(long), Number(lat)],
+            },
+            distanceField: "distance",
+            spherical: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "catelogbooks",
+            let: { catalog_book_ids: "$catelog_books" },
+            as: "books",
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: ["$_id", "$$catalog_book_ids"],
+                  },
+                },
+              },
+              {
+                $lookup: {
+                  from: "catelogbookpages",
+                  let: { page_ids: "$pages" },
+                  as: "pages",
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $in: ["$_id", "$$page_ids"],
+                        },
+                      },
+                    },
+                    {
+                      $project: {
+                        page_image: 1,
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+        {
+          $project: {
+            books: 1,
+            shop_name: 1,
+            distance: 1,
+            customized_shop_name: 1,
+          },
+        },
+      ]);
+
+      catelogBooks = result
+        .map((shop) => {
+          return shop.books.map((book) => ({
+            ...book,
+            shop_id: { shop_name: shop.shop_name, distance: shop.distance, customized_shop_name:shop.customized_shop_name },
+          }));
+        })
+        .flatMap((a) => a);
+    } else {
+      // Apply filters to query if they exist
+      if (search) {
+        query = {
+          ...query,
+          title: { $regex: search, $options: 'i' } // Case-insensitive search
+        };;
+      }
+
+      // Count total items for pagination
+      const totalItems = await CatelogBook.countDocuments(query);
+
+      // Calculate pagination
+      const totalPages = Math.ceil(totalItems / entries);
+      const offset = (page - 1) * entries;
+
+      // Query items with pagination
+      catelogBooks = await CatelogBook.find(query)
+        .sort({ _id: -1 })
+        .skip(offset)
+        .limit(entries)
+        .populate({
+          path: "shop_id",
+          select: "shop_name",
+        })
+        .populate({
+          path: "pages",
+          select: "page_image",
+        });
+
+      // Construct pagination metadata
+      const pagination = {
+        currentPage: page,
+        totalPages: totalPages,
+        totalItems: totalItems,
+      };
+      
+      // Send response with pagination metadata
+      res.status(200).json({ catelogBooks, pagination });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+
+
+
 const createCatelogBook = async (req, res) => {
   const newCatelogBook = new CatelogBook({ ...req.body });
 
@@ -278,5 +406,6 @@ module.exports = {
   updateCatelogBook,
   deleteCatelogBook,
   countDocuments,
-  getCatelogBookByVendor
+  getCatelogBookByVendor,
+  getAllCatelogBookparams
 };

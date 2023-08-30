@@ -1,6 +1,8 @@
 const Shop = require("../models/shop");
 const mongoose = require("mongoose");
 
+const DEFAULT_ITEMS_PER_PAGE = 10; // Default items per page value
+
 const getAllShops = async (req, res) => {
   try {
     let shops = await Shop.find().sort({ _id: -1 });
@@ -8,6 +10,34 @@ const getAllShops = async (req, res) => {
     res.status(200).json(shops);
   } catch (error) {
     res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+const getAllShopsParams = async (req, res) => {
+  try {
+    const { page = 1, search = '', itemsPerPage = DEFAULT_ITEMS_PER_PAGE } = req.query;
+    const options = {
+      sort: { _id: -1 },
+      skip: (page - 1) * itemsPerPage,
+      limit: parseInt(itemsPerPage),
+    };
+
+    let query = {};
+    if (search) {
+      query = { shop_name: { $regex: search, $options: 'i' } };
+    }
+
+    const totalItems = await Shop.countDocuments(query);
+    const shops = await Shop.find(query, null, options);
+
+    res.status(200).json({
+      shops,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalItems / itemsPerPage),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
@@ -85,6 +115,44 @@ const getShopByVendor = async (req, res) => {
   }
 };
 
+const getShopByVendorParms = async (req, res) => {
+  try {
+    const { page = 1, search = '', itemsPerPage = DEFAULT_ITEMS_PER_PAGE } = req.query;
+    const options = {
+      sort: { _id: -1 },
+      skip: (page - 1) * itemsPerPage,
+      limit: parseInt(itemsPerPage),
+    };
+
+    const vendorId = new mongoose.Types.ObjectId(req.params.id);
+    let query = { vendor: vendorId };
+
+    if (search) {
+       query = {
+          ...query,
+          shop_name: { $regex: search, $options: 'i' } // Case-insensitive search
+        };;
+    }
+
+    const totalItems = await Shop.countDocuments(query);
+    const shops = await Shop.find(query, null, options);
+
+    if (shops.length === 0) {
+      return res.status(404).json({ msg: `No Shop associated with ${req.params.id}` });
+    }
+
+    res.status(200).json({
+      shops,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalItems / itemsPerPage),
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+
 const updateShop = async (req, res) => {
   try {
     const id = req.params.id;
@@ -161,5 +229,7 @@ module.exports = {
   updateShop,
   deleteShop,
   countDocuments,
-  getShopByVendor
+  getShopByVendor,
+  getAllShopsParams,
+  getShopByVendorParms
 };

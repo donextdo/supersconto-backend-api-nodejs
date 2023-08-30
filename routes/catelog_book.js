@@ -7,7 +7,8 @@ const {
     updateCatelogBook,
     deleteCatelogBook,
     countDocuments,
-    getCatelogBookByVendor
+    getCatelogBookByVendor,
+    getAllCatelogBookparams
 } = require('../controllers/catelog_book')
 
 const FILE_TYPE_MAP = {
@@ -19,6 +20,8 @@ const FILE_TYPE_MAP = {
 const router = express.Router()
 
 router.get('/', getAllCatelogBook)
+
+router.get('/getall', getAllCatelogBookparams)
 
 router.get('/find/:id', getCatelogBook)
 

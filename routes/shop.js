@@ -9,7 +9,9 @@ const {
   updateShop,
   deleteShop,
   countDocuments,
-  getShopByVendor
+  getShopByVendor,
+  getAllShopsParams,
+  getShopByVendorParms
 } = require("../controllers/shop");
 const {AuthenticatedVendorMiddleware} = require("../middleware/authentication");
 
@@ -19,9 +21,15 @@ const router = express.Router();
 
 router.get("/", getAllShops);
 
+router.get("/allshops", getAllShopsParams);
+
+
 router.get("/find/:id", getShop);
 
 router.get("/by-vendor/:id", AuthenticatedVendorMiddleware, getShopByVendor);
+
+router.get("/by-vendor-params/:id", AuthenticatedVendorMiddleware, getShopByVendorParms);
+
 
 router.post("/", uploadOptions.single("logo_img"), createShop);
 
