@@ -4,7 +4,7 @@ const createToken = (payload) => {
     return jwt.sign(
         {user: payload},
         process.env.JWT_SECRET,
-        {expiresIn: '7d'}
+        {expiresIn: '4h'}
     )
 }
 
