@@ -1,4 +1,6 @@
 const News = require("../models/news");
+const DEFAULT_ITEMS_PER_PAGE = 10; // Default items per page value
+
 
 const getAllNews = async (req, res) => {
   try {
@@ -9,6 +11,34 @@ const getAllNews = async (req, res) => {
     res.status(200).json(news);
   } catch (error) {
     res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+const getAllNewsParams = async (req, res) => {
+  try {
+    const { page = 1, search = '', itemsPerPage = DEFAULT_ITEMS_PER_PAGE } = req.query;
+    const options = {
+      sort: { _id: -1 },
+      skip: (page - 1) * itemsPerPage,
+      limit: parseInt(itemsPerPage),
+    };
+
+    let query = {};
+    if (search) {
+      query.title = { $regex: search, $options: 'i' };
+    }
+
+    const totalItems = await News.countDocuments(query);
+    const news = await News.find(query, null, options);
+
+    res.status(200).json({
+      news,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalItems / itemsPerPage),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
@@ -139,4 +169,5 @@ module.exports = {
   updateNews,
   deleteNews,
   countDocuments,
+  getAllNewsParams
 };

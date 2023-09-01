@@ -9,7 +9,8 @@ const {
     updateVendor,
     updateProfilePic,
     deleteVendor,
-    countVendors
+    countVendors,
+    getAllVendorsParams
 } = require('../controllers/vendor')
 
 
@@ -18,6 +19,8 @@ const uploadOptions = multer({storage: storage})
 const router = express.Router()
 
 router.get('/', getAllVendors)
+
+router.get('/getall', getAllVendorsParams)
 
 router.get('/find/:id', getVendorById)
 

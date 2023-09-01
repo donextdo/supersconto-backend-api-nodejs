@@ -150,6 +150,54 @@ const getAllCategories = async (req, res) => {
   }
 };
 
+const getAllCategoriesParams = async (req, res) => {
+  
+  try {
+    const {search = '' } = req.query;
+    const subCategoriesLevelFour = await SubcategoryLevelFour.find().populate({
+      path: "mainCategoryId",
+      populate: [
+        {
+          path: "mainCategoryId",
+          populate: [
+            { path: "mainCategoryId", populate: [{ path: "mainCategoryId" }] },
+          ],
+        },
+      ],
+    });
+    const subCategoriesLevelThree = await SubcategoryLevelThree.find().populate(
+      {
+        path: "mainCategoryId",
+        populate: [
+          { path: "mainCategoryId", populate: [{ path: "mainCategoryId" }] },
+        ],
+      }
+    );
+    const subCategoriesLevelTwo = await SubcategoryLevelTwo.find().populate({
+      path: "mainCategoryId",
+      populate: [{ path: "mainCategoryId" }],
+    });
+    const subCategories = await SubCategory.find();
+
+    let query = {};
+    if (search) {
+      query = { name: { $regex: search, $options: 'i' } };
+    }
+
+    const mainCategories = await MainCategory.find(query);
+    res.status(200).json({
+      mainCategories: mainCategories,
+      subCategories: subCategories,
+      subCategoriesLevelTwo: subCategoriesLevelTwo,
+      subCategoriesLevelThree: subCategoriesLevelThree,
+      subCategoriesLevelFour: subCategoriesLevelFour,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
 const getMainCategoryById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -390,6 +438,7 @@ module.exports = {
   getSubCategoryLevelThreeById,
   getSubCategoryLevelFourById,
   getSubCategoryByMainCategoryId,
+  getAllCategoriesParams
   // getSubCategoryLevelTwoBySubCategoryId,
   // getSubCategoryLevelThreeBySubCategoryId,
   // getSubCategoryLevelFourBySubCategoryId,

@@ -17,6 +17,7 @@ router.post(
   categoryController.createSubCategoryLevelFour
 );
 router.get("/categories", categoryController.getAllCategories);
+router.get("/categories/getall", categoryController.getAllCategoriesParams);
 router.get("/categories/:id", categoryController.getMainCategoryById);
 router.get("/subcategories/:id", categoryController.getSubCategoryById);
 router.get(

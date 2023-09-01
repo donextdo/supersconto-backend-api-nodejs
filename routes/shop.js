@@ -11,7 +11,8 @@ const {
   countDocuments,
   getShopByVendor,
   getAllShopsParams,
-  getShopByVendorParms
+  getShopByVendorParms,
+  getCheckName
 } = require("../controllers/shop");
 const {AuthenticatedVendorMiddleware} = require("../middleware/authentication");
 
@@ -32,6 +33,9 @@ router.get("/by-vendor-params/:id", AuthenticatedVendorMiddleware, getShopByVend
 
 
 router.post("/", uploadOptions.single("logo_img"), createShop);
+
+router.post("/check-name", uploadOptions.single("logo_img"), getCheckName);
+
 
 router.patch("/:id", uploadOptions.single("logo_img"), updateShop);
 
