@@ -1,5 +1,6 @@
 const Vendor = require('../models/vendor')
 
+const DEFAULT_ITEMS_PER_PAGE = 10; // Default items per page value
 
 const getAllVendors = async (req, res, next) => {
     try {
@@ -12,6 +13,33 @@ const getAllVendors = async (req, res, next) => {
     }
 }
 
+const getAllVendorsParams = async (req, res) => {
+  try {
+    const { page = 1, search = '', itemsPerPage = DEFAULT_ITEMS_PER_PAGE } = req.query;
+    const options = {
+      select: { password: false },
+      skip: (page - 1) * itemsPerPage,
+      limit: parseInt(itemsPerPage),
+    };
+
+    let query = {};
+    if (search) {
+      query = { fullName: { $regex: search, $options: 'i' } };
+    }
+
+    const totalItems = await Vendor.countDocuments(query);
+    const venders = await Vendor.find(query, null, options);
+
+    res.status(200).json({
+      venders,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalItems / itemsPerPage),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 const getVendorById = async (req, res, next) => {
     try {
@@ -199,5 +227,6 @@ module.exports = {
     updateVendor,
     updateProfilePic,
     deleteVendor,
-    countVendors
+    countVendors,
+    getAllVendorsParams
 }

@@ -62,6 +62,25 @@ const createShop = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+const getCheckName = async (req, res) => {
+  try {
+    const { shop_name } = req.body;
+
+    const shopExists = await Shop.findOne({ shop_name });
+    console.log(shopExists)
+    
+    if (shopExists) {
+      return res.status(400).json({ error: 'Shop name already exists' });
+  } else {
+      return res.status(200).json({ message: 'Shop name is not available' });
+  }
+
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
 const getShop = async (req, res) => {
   try {
     const shop = await Shop.findById(req.params.id).populate({
@@ -231,5 +250,6 @@ module.exports = {
   countDocuments,
   getShopByVendor,
   getAllShopsParams,
-  getShopByVendorParms
+  getShopByVendorParms,
+  getCheckName
 };
