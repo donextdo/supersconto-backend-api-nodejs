@@ -21,6 +21,11 @@ const CatelogBookSchema = new mongoose.Schema({
         required: true
     },
 
+    startdate: {
+        type: Date,
+        
+    },
+
     status: {
         type: Number,
         default: 0

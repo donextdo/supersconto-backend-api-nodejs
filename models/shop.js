@@ -23,10 +23,10 @@ const AddressSchema = new mongoose.Schema({
     //   type: String,
     //   required: true,
     // },
-    postal_code: {
-        type: String,
-        //required: true,
-    },
+    // postal_code: {
+    //     type: String,
+    //     //required: true,
+    // },
     // geometry: {
     //     type: GeoSchema
     // },
@@ -47,7 +47,33 @@ const ShopSchema = new mongoose.Schema(
         city: {
             type: String,     
         },
-
+        cityCode: {
+            type: String,     
+        },
+        country: {
+            type: String,     
+        },
+        countryCode: {
+            type: String,     
+        },
+        administrativeOne: {
+            type: String,     
+        },
+        administrativeTwo: {
+            type: String,     
+        },
+        administrativeThree: {
+            type: String,     
+        },
+        street: {
+            type: String,     
+        },
+        route: {
+            type: String,     
+        },
+        postal_code: {
+            type: String,     
+        },
         vendor: {
             type: Schema.Types.ObjectId,
             required: true,
