@@ -24,7 +24,12 @@ const getAllShopsParams = async (req, res) => {
 
     let query = {};
     if (search) {
-      query = { shop_name: { $regex: search, $options: 'i' } };
+      query = {
+        $or: [
+          { 'shop_name': { $regex: new RegExp(search, 'i') } }, // Case-insensitive search for shop_name
+          { 'address.address': { $regex: new RegExp(search, 'i') } }, // Case-insensitive search for address
+        ],
+      };
     }
 
     const totalItems = await Shop.countDocuments(query);
