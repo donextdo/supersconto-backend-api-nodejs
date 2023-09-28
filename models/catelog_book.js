@@ -21,6 +21,11 @@ const CatelogBookSchema = new mongoose.Schema({
         required: true
     },
 
+    startdate: {
+        type: Date,
+        
+    },
+
     status: {
         type: Number,
         default: 0
@@ -35,7 +40,14 @@ const CatelogBookSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-
+    flyer: {
+        type: Boolean,
+        default: false
+    },
+    active: {
+        type: Boolean,
+        default: false
+    },
     pages: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'CatelogBookPage'

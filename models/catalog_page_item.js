@@ -33,7 +33,15 @@ const CatelogBookPageItemSchema = new mongoose.Schema(
       type: String,
     },
 
-    product_description: {
+    product_sub_category_level_two: {
+      type: String,
+    },
+
+    product_sub_category_level_three: {
+      type: String,
+    },
+
+    product_description_level_four: {
       type: String,
     },
 
@@ -54,6 +62,11 @@ const CatelogBookPageItemSchema = new mongoose.Schema(
     },
 
     unit_price: {
+      type: Number,
+      // required: true
+    },
+
+    discounted_price: {
       type: Number,
       // required: true
     },

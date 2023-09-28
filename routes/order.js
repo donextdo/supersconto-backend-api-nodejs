@@ -1,7 +1,6 @@
 const express = require('express')
 
 const router = express.Router()
-
 const {
     createOrder,
     getAllOrders,
@@ -10,6 +9,7 @@ const {
     getOrderItemsByOrder,
     getOrdersByShopId
 } = require('../controllers/order')
+
 
 router.post('/', createOrder)
 
@@ -22,5 +22,6 @@ router.get('/order-items', getAllOrderItems)
 router.post('/order-items/by-order', getOrderItemsByOrder)
 
 router.get('/shops/:shopId/orders', getOrdersByShopId)
+
 
 module.exports = router

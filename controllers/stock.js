@@ -1,4 +1,5 @@
 const CatelogBookPageItem = require('../models/catalog_page_item')
+const Shop = require("../models/shop");
 
 
 const getAllStocks = async (req, res, next) => {
@@ -34,6 +35,21 @@ const filterByShop = async (req, res, next) => {
     }
 }
 
+const filterByVendor = async (req, res, next) => {
+    try {
+        const shops = await Shop.find({vendor:req.params.id}).lean()
+        const stocks = await CatelogBookPageItem.find({ shop_id: { $in: shops.map(a => a._id) } }).populate({
+            path: 'shop_id',
+            select: ['shop_name', 'address', 'logo_img']
+        })
+
+        res.status(200).json(stocks)
+    }
+    catch (error) {
+        res.status(500).json({ message: "Internal Server error" });
+    }
+}
+
 const filterByCity = async (req, res, next) => {
     try {
         const city = req.body.city
@@ -55,7 +71,8 @@ const filterByCity = async (req, res, next) => {
 module.exports = {
     getAllStocks,
     filterByShop,
-    filterByCity
+    filterByCity,
+    filterByVendor
 }
 
 

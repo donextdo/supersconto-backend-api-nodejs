@@ -13,13 +13,13 @@ const getproductByfilter = async (req, res) => {
     const filter = {
       $and: [
         buildFilterObject(
-            categoryId,
-            subCategories,
-            brands,
-            minPrice,
-            maxPrice
-        )
-      ]
+          categoryId,
+          subCategories,
+          brands,
+          minPrice,
+          maxPrice
+        ),
+      ],
     };
 
     // Retrieve the filtered products from the database
@@ -42,12 +42,19 @@ const buildFilterObject = (
   const filter = {};
 
   if (categoryId) {
-    filter.product_category = categoryId;
+    filter.$or = [
+      { product_category: categoryId },
+      { product_sub_category: categoryId },
+      { product_sub_category_level_two: categoryId },
+    ];
   }
-
   if (subCategories) {
     const subCatArr = subCategories.split(",");
-    filter.product_sub_category = { $in: subCatArr };
+    filter.$or = [
+      { product_sub_category: { $in: subCatArr } },
+      { product_sub_category_level_two: { $in: subCatArr } },
+    ];
+    // filter.product_sub_category = { $in: subCatArr };
   }
 
   if (brands) {
@@ -57,7 +64,7 @@ const buildFilterObject = (
 
   if (!isNaN(minPrice) && !isNaN(maxPrice)) {
     if (minPrice > 0 && maxPrice > 0) {
-      filter.unit_price = {$gte: minPrice, $lte: maxPrice};
+      filter.unit_price = { $gte: minPrice, $lte: maxPrice };
     }
   }
 

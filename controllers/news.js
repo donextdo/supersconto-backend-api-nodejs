@@ -1,4 +1,6 @@
 const News = require("../models/news");
+const DEFAULT_ITEMS_PER_PAGE = 10; // Default items per page value
+
 
 const getAllNews = async (req, res) => {
   try {
@@ -12,56 +14,73 @@ const getAllNews = async (req, res) => {
   }
 };
 
+const getAllNewsParams = async (req, res) => {
+  try {
+    const { page = 1, search = '', itemsPerPage = DEFAULT_ITEMS_PER_PAGE } = req.query;
+    const options = {
+      sort: { _id: -1 },
+      skip: (page - 1) * itemsPerPage,
+      limit: parseInt(itemsPerPage),
+    };
+
+    let query = {};
+    if (search) {
+      query.title = { $regex: search, $options: 'i' };
+    }
+
+    const totalItems = await News.countDocuments(query);
+    const news = await News.find(query, null, options);
+
+    res.status(200).json({
+      news,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalItems / itemsPerPage),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
 const createNews = async (req, res) => {
-  // const files = req.files
-  // console.log(files)
-
-  // if(files.length < 1) {
-  //     return res.status(400).send('No Document in request')
-  // }
-
-  // const basePath = `${process.env.IMG_SERVER}/public/images/`
-  // const fileNames = files.map(file => {
-  //     return `${basePath}${file.filename}`
-  // })
-
-  // const {images, ...otherData} = req.body
-
-  // const newNews = new News({...otherData, images: fileNames})
   const file = req.file;
 
-  let img = null;
+  let image = null;
 
   if (file) {
-    img = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
+    image = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
   }
 
   const { images, ...payload } = req.body;
 
   const newNews = new News({
     ...payload,
-    img,
+    image,
   });
+
   try {
     const News = await newNews.save();
     res.status(201).json(News);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Internal Server error" });
   }
 };
 
 const getNews = async (req, res) => {
-  try {
-    const News = await News.findById(req.params.id);
+    console.log("dabdhabdhbdhbawdh")
 
-    if (!News) {
+  try {
+    const oneNew = await News.findById(req.params.id);
+    if (!oneNew) {
       return res
         .status(404)
         .json({ msg: `No News associate with ${req.params.is}` });
     }
 
-    res.status(200).json(News);
+    res.status(200).json(oneNew);
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Internal Server error" });
   }
 };
@@ -94,11 +113,9 @@ const updateNews = async (req, res) => {
     }
 
     const file = req.file;
-
-    let images = news.images;
-
+    let image
     if (file) {
-      profilePic = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
+      image = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
     }
 
     const updatedNews = await News.findByIdAndUpdate(
@@ -106,7 +123,7 @@ const updateNews = async (req, res) => {
       {
         $set: {
           ...req.body,
-          images,
+          image,
         },
       },
       {
@@ -152,4 +169,5 @@ module.exports = {
   updateNews,
   deleteNews,
   countDocuments,
+  getAllNewsParams
 };

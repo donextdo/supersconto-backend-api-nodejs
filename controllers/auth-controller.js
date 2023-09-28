@@ -4,6 +4,10 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const {createToken} = require('../utils/token')
 const auth = require("jsonwebtoken");
+const {v4: uuidv4} = require("uuid");
+const Token = require("../models/token")
+const sendEmail = require("../config/nodemailer/nodemailer");
+const bcrypt = require("bcrypt");
 
 const loginAll = async (req, res, next) => {
     passport.authenticate(
@@ -11,6 +15,7 @@ const loginAll = async (req, res, next) => {
         async (err, user, info) => {
             try {
                 if (err || !user) {
+                    console.log(err);
                     return res.status(401).json({message: info?.message,})
                 }
                 req.login(
@@ -18,6 +23,7 @@ const loginAll = async (req, res, next) => {
                     {session: false},
                     async (error) => {
                         if (error) {
+                            console.log(error)
                             return res.status(500).json({message: 'error login user'})
                         }
                         const {password, ...userData} = user._doc
@@ -25,10 +31,11 @@ const loginAll = async (req, res, next) => {
                         const body = {_id: user._id, email: userData.email, role: userData.userType};
                         const token = createToken(body)
 
-                        return res.json({token, user: userData});
+                        return res.json({token, ...userData});
                     }
                 );
             } catch (error) {
+                console.log(error)
                 return res.status(401).json({message: 'error login user'})
             }
         }
@@ -41,7 +48,7 @@ const signupAll = async (req, res, next) => {
         if (err || !user) {
             console.log(err)
             console.log(user)
-            if (err.code && err.code === 11000) {
+            if (err?.code && err?.code === 11000) {
                 return res.status(400).json({
                     isRegistered: false,
                     duplicate: Object.keys(err.keyValue),
@@ -90,7 +97,7 @@ const socialLoginAll = async (req, res, next) => {
 
         const user = await User.findOne({email}).select("-password").lean();
         if (user) {
-            const token = auth.sign({_id: user.id}, 'myprivatekey');
+            const token = createToken({_id: user._id, email: user.email, role: Roles.CUSTOMER});
             return res.status(200).send({...user, token});
         } else {
             const nameArr = fullName.split(" ")
@@ -102,8 +109,8 @@ const socialLoginAll = async (req, res, next) => {
             });
 
             if (registeredUser) {
-                const token = auth.sign({_id: registeredUser.id}, 'myprivatekey');
-                return res.status(200).send({...registeredUser, token});
+                const token = createToken({_id: registeredUser._id, email: registeredUser.email, role: Roles.CUSTOMER});
+                return res.status(200).send({...registeredUser._doc, token});
             }
 
         }
@@ -113,4 +120,97 @@ const socialLoginAll = async (req, res, next) => {
     }
 }
 
-module.exports = {loginAll, signupAll, getAuthUser, socialLoginAll}
+const forgetPassword = async (req, res, next) => {
+    try {
+        const {email} = req.body
+        const user = await User.findOne({email})
+
+        if (!user) {
+            return res.status(400).send("Invalid email");
+        } else {
+            let token = await Token.findOne({userId: user._id})
+            if (token) await token.deleteOne()
+            const uuid = uuidv4();
+            await Token.create({
+                userId: user._id,
+                token: uuid,
+                role: "User",
+                createdAt: Date.now()
+            })
+            const url = `${process.env.NEXT_URL}/verify-password?t=${uuid}&u=${user._id}`
+            const mailOptions = {
+                to: email,
+                subject: 'Forgot Password',
+                html: `<p>Click the link below to reset your password:</p><p><a href="${url}">reset password</a></p>`
+            };
+
+            sendEmail(mailOptions, (error, info) => {
+                if (error) {
+                    console.error('Error sending email:', error);
+                    res.status(500).json({error: 'Failed to send email'});
+                } else {
+                    console.log('Email sent:', info.response);
+                    res.json({message: 'Email sent successfully'});
+                }
+
+            })
+        }
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
+const verifyPassword = async (req, res, next) => {
+    try {
+        const {token, userId} = req.body
+
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(400).send("user not found");
+        } else {
+            const checkToken = await Token.findOne({userId: userId})
+            if (!checkToken) {
+                return res.status(400).send("token not found");
+            } else {
+                if (checkToken.token === token) {
+                    res.json({isVerify: true});
+                } else {
+                    res.json({isVerify: false});
+
+                }
+            }
+        }
+
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+}
+
+const updatePassword = async (req, res, next) => {
+    try {
+        const {token, userId, newPassword} = req.body
+
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(400).send("user not found");
+        } else {
+            const checkToken = await Token.findOne({userId: userId})
+            if (!checkToken) {
+                return res.status(400).send("token not found");
+            } else {
+                if (checkToken.token === token) {
+                    await User.updateOne({_id: user._id}, {password: await bcrypt.hash(newPassword, 10)})
+                    await checkToken.deleteOne()
+                    return res.json({isUpdated: true});
+                } else {
+                    return res.json({isUpdated: false});
+                }
+            }
+        }
+
+    } catch (error) {
+        return res.status(500).json(error.message)
+    }
+}
+
+module.exports = {loginAll, signupAll, getAuthUser, socialLoginAll, forgetPassword, verifyPassword, updatePassword}

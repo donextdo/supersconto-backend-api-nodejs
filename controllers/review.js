@@ -1,10 +1,4 @@
-const { request } = require("express");
 const Review = require("../models/review");
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-
-
-
 const addReview = async (req, res) => {
   const productId = req.body.productId;
   const userId = req.body.userId;
@@ -35,21 +29,6 @@ const addReview = async (req, res) => {
     isHelpfulFeedback,
   });
   try {
-    const token = req.headers.authorization;
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    // Verify and decode the token
-    const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
-    const userEmail = decodedToken.data;
-
-    // Find the user based on the email
-     let user = await User.findOne({ email: userEmail });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
     
     let response = await review.save();
     if (response) {

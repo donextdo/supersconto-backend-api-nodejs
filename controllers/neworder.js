@@ -4,11 +4,11 @@ const Product = require("../models/product");
 const Catalog_page_item = require("../models/catalog_page_item");
 const axios = require("axios");
 const CatelogBookPageItem = require("../models/catalog_page_item");
+const sendEmail = require("../config/nodemailer/nodemailer");
 let ORDERCURRENTBRAND = "BT";
 let ORDERCURRENTAMOUNT = 1000;
 
 const createOrder = async (req, res) => {
-  const baseUrl = "http://localhost:3000/v1/api/neworder/";
   const userId = req.body.userId;
   const items = req.body.items;
   const billingAddress = req.body.billingAddress;
@@ -20,8 +20,8 @@ const createOrder = async (req, res) => {
   const deletedAt = null;
 
   try {
-    const orderCount = await axios.get(`${baseUrl}`);
-    const count = orderCount.data.length;
+    
+    const count = await Order.countDocuments()
     const orderNumber =
       ORDERCURRENTBRAND + (parseInt(ORDERCURRENTAMOUNT) + (count + 1));
 
@@ -93,7 +93,7 @@ const createOrder = async (req, res) => {
 
           const remainingItem =
             catelogBookPageItemExist.remaining_qty - orderquantity;
-
+          console.log(remainingItem)
           // Update the CatelogBookPageItem with the new remaining item value
           await CatelogBookPageItem.findByIdAndUpdate(
             productId,
@@ -279,6 +279,7 @@ const getOrderById = async (req, res) => {
         description: product.description,
         price: product.unit_price,
         front: product.product_image,
+        discount: product.discount,
       };
     });
 
@@ -318,6 +319,33 @@ const getOrderById = async (req, res) => {
   }
 };
 
+const emailCartItems = async (req, res, next) => {
+  const {originalname, buffer} = req.file;
+
+  const mailOptions = {
+    to: req.body.email,
+    subject: 'Shopping List PDF',
+    text: 'Attached is the shopping list PDF.',
+    attachments: [
+      {
+        filename: originalname,
+        content: buffer,
+      },
+    ],
+  };
+
+  sendEmail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+      res.status(500).json({error: 'Failed to send email'});
+    } else {
+      console.log('Email sent:', info.response);
+      res.json({message: 'Email sent successfully'});
+    }
+
+  })
+}
+
 module.exports = {
   createOrder,
   getAllOrders,
@@ -325,4 +353,5 @@ module.exports = {
   updateOrder,
   deleteOrder,
   getOrderByUser,
+  emailCartItems
 };

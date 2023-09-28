@@ -8,6 +8,7 @@ const {
     createNews,
     updateNews,
     deleteNews,
+    getAllNewsParams,
 } = require('../controllers/news')
 
 
@@ -15,7 +16,9 @@ const uploadOptions = multer({storage: storage})
 
 const router = express.Router()
 
-router.get('/',uploadOptions.single('images'), getAllNews)
+router.get('/', getAllNews)
+
+router.get('/getall', getAllNewsParams)
 
 router.get('/find/:id', getNews)
 

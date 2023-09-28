@@ -1,113 +1,161 @@
 const mongoose = require("mongoose");
 const GeoSchema = require("./geo_schema");
+const {Schema} = require("mongoose");
 
 const AddressSchema = new mongoose.Schema({
-  address: {
-    type: String,
-    //required: true,
-  },
+    address: {
+        type: String,
+        //required: true,
+    },
 
-  // address_line2: {
-  //   type: String,
-  // },
+    // address_line2: {
+    //   type: String,
+    // },
 
-  // address_line3: {
-  //   type: String,
-  // },
-  state: {
-    type: String,
-    //required: true,
-  },
-  // city: {
-  //   type: String,
-  //   required: true,
-  // },
-  postal_code: {
-    type: String,
-    //required: true,
-  },
-  // geometry: {
-  //     type: GeoSchema
-  // },
+    // address_line3: {
+    //   type: String,
+    // },
+    state: {
+        type: String,
+        //required: true,
+    },
+    // city: {
+    //   type: String,
+    //   required: true,
+    // },
+    // postal_code: {
+    //     type: String,
+    //     //required: true,
+    // },
+    // geometry: {
+    //     type: GeoSchema
+    // },
 });
 
 const ShopSchema = new mongoose.Schema(
-  {
-    shop_name: {
-      type: String,
-      // required: true,
-    },
+    {
+        shop_name: {
+            type: String,
+            // required: true,
+        },
+        customized_shop_name: {
+            type: String,    
+        },
+        website: {
+            type: String,     
+        },
+        city: {
+            type: String,     
+        },
+        cityCode: {
+            type: String,     
+        },
+        country: {
+            type: String,     
+        },
+        countryCode: {
+            type: String,     
+        },
+        administrativeOne: {
+            type: String,     
+        },
+        administrativeTwo: {
+            type: String,     
+        },
+        administrativeThree: {
+            type: String,     
+        },
+        street: {
+            type: String,     
+        },
+        route: {
+            type: String,     
+        },
+        postal_code: {
+            type: String,     
+        },
+        vendor: {
+            type: Schema.Types.ObjectId,
+            required: true,
+            refPath: 'role'
+        },
 
-    description: {
-      type: String,
-      //required: true,
-    },
+        role: {
+            type: String,
+            required: true,
+            enum: ['Admin', 'Vendor']
+        },
 
-    address: {
-      type: AddressSchema,
+        description: {
+            type: String,
+            //required: true,
+        },
 
-      //required: true
-    },
+        address: {
+            type: AddressSchema,
 
-    shop_unique_id: {
-      //shop name + shopaddress
-      type: String,
-      // required: true
-    },
+            //required: true
+        },
 
-    owner_name: {
-      type: String,
-      // required: true
-    },
+        shop_unique_id: {
+            //shop name + shopaddress
+            type: String,
+            // required: true
+        },
 
-    status: {
-      type: Boolean,
-      // required: true
-    },
+        owner_name: {
+            type: String,
+            // required: true
+        },
 
-    logo_img: {
-      type: String,
-      // required: true
-    },
+        status: {
+            type: Boolean,
+            // required: true
+        },
 
-    latitude: {
-      type: Number,
-      // required: true
-    },
+        logo_img: {
+            type: String,
+            // required: true
+        },
 
-    longitude: {
-      type: Number,
-      // required: true
-    },
+        latitude: {
+            type: Number,
+            // required: true
+        },
 
-    shop_category: {
-      type: String,
-    },
+        longitude: {
+            type: Number,
+            // required: true
+        },
 
-    is_online_selling: {
-      type: Boolean,
-    },
+        shop_category: {
+            type: String,
+        },
 
-    telephone: {
-      type: String,
-    },
+        is_online_selling: {
+            type: Boolean,
+        },
 
-    isDelete: {
-      type: Boolean,
-      default: false,
+        telephone: {
+            type: String,
+        },
+
+        isDelete: {
+            type: Boolean,
+            default: false,
+        },
+        coordinates: {
+            type: [Number],
+            index: "2dsphere",
+        },
+        catelog_books: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "CatelogBook",
+            },
+        ],
     },
-    coordinates: {
-      type: [Number],
-      index: "2dsphere",
-    },
-    catelog_books: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "CatelogBook",
-      },
-    ],
-  },
-  { timestamps: true }
+    {timestamps: true}
 );
 
 module.exports = mongoose.model("Shop", ShopSchema);
