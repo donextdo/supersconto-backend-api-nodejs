@@ -1,5 +1,8 @@
 const CatelogBook = require("../models/catelog_book");
 const Shop = require("../models/shop");
+const CatelogBookPage = require("../models/catelogbook_page");
+const CatelogBookPageItem = require("../models/catalog_page_item");
+const mongoose = require("mongoose");
 
 const ITEMS_PER_PAGE = 10; // Number of items to show per page
 
@@ -97,8 +100,13 @@ const getAllCatelogBook = async (req, res) => {
                     {
                       $project: {
                         page_image: 1,
+                        page_no: 1,
                       },
                     },
+                    {
+                      $sort: { page_no: 1 } // Sort by the createdAt field in ascending order (1)
+                      // For descending order, use { createdAt: -1 }
+                    }
                   ],
                 },
               },
@@ -257,7 +265,7 @@ const getAllCatelogBookparams = async (req, res) => {
         totalPages: totalPages,
         totalItems: totalItems,
       };
-      
+
       // Send response with pagination metadata
       res.status(200).json({ catelogBooks, pagination });
     }
@@ -294,6 +302,9 @@ const getCatelogBook = async (req, res) => {
   try {
     const catelogBook = await CatelogBook.findById(req.params.id).populate({
       path: "pages",
+      options: {
+        sort: { page_no: 1 }
+      },
       populate: {
         path: "items",
         model: "CatelogBookPageItem",
@@ -390,6 +401,82 @@ const countDocuments = async (req, res) => {
     res.status(500).json({ message: "Internal Server error" });
   }
 };
+const cloneCatelogBook = async (req, res) => {
+  try {
+    const {shopId, catalogId} = req.body;
+
+    if (!shopId || !catalogId) {
+      return res.status(400).json({message: "Invalid Shop or Catalog"});
+    }
+
+    const targetShop = await Shop.findById(shopId).lean();
+    const catalog = await CatelogBook.findById(catalogId).populate({
+      path: "pages",
+      populate: {
+        path: "items",
+      },
+    }).lean();
+
+    if (!targetShop || !catalog) {
+      return res.status(404).json({message: "Shop or Catalog not found"});
+    }
+
+    const {pages, ...targetCatalog} = catalog;
+
+    const newCatalog = await CatelogBook.create({
+      ...targetCatalog,
+      shop_id: shopId,
+      _id: new mongoose.Types.ObjectId(),
+    });
+
+    const pagePromises = pages.map(async (page, index) => {
+      const newPage = await CatelogBookPage.create({
+        ...page,
+        shop_id: shopId,
+        catelog_book_id: newCatalog._id,
+        _id: new mongoose.Types.ObjectId(),
+      });
+
+      const itemPromises = page.items.map(async (item, index) => {
+        return await CatelogBookPageItem.create({
+          ...item,
+          shop_id: shopId,
+          catelog_book_id: newCatalog._id,
+          catelog_page_id: newPage._id,
+          quantity: 0,
+          _id: new mongoose.Types.ObjectId(),
+        });
+      });
+
+      try {
+        const items = await Promise.all(itemPromises);
+        newPage.items = items.map(i => i._id);
+        await newPage.save();
+      } catch (error) {
+        console.log(error);
+        return res
+            .status(500)
+            .json({message: "Error cloning CatelogBookPageItems"});
+      }
+
+      return newPage;
+    });
+
+    try {
+      const pages = await Promise.all(pagePromises);
+      newCatalog.pages = pages.map(i => i._id);
+      await newCatalog.save();
+      res.json({newCatalog});
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({message: "Error cloning CatelogBookPage"});
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({message: "Internal Server error"});
+  }
+
+}
 
 module.exports = {
   getAllCatelogBook,
@@ -399,5 +486,6 @@ module.exports = {
   deleteCatelogBook,
   countDocuments,
   getCatelogBookByVendor,
-  getAllCatelogBookparams
+  getAllCatelogBookparams,
+  cloneCatelogBook
 };

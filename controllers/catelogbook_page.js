@@ -40,17 +40,17 @@ const getAllCatelogBookPages = async (req, res) => {
       CatelogBookPages = await CatelogBookPage.find({
         catelog_book_id: query.catelog,
       })
-        .sort({ _id: -1 })
+        .sort({ page_no: 1 })
         .populate("items");
     } else if (query.shop) {
       CatelogBookPages = await CatelogBookPage.find({
         shop_id: query.shop,
       })
-        .sort({ _id: -1 })
+        .sort({ page_no: -1 })
         .populate("items");
     } else {
       CatelogBookPages = await CatelogBookPage.find()
-        .sort({ _id: -1 })
+        .sort({ page_no: -1 })
         .populate("items");
     }
 
