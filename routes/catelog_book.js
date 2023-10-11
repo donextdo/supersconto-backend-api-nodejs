@@ -8,7 +8,8 @@ const {
     deleteCatelogBook,
     countDocuments,
     getCatelogBookByVendor,
-    getAllCatelogBookparams
+    getAllCatelogBookparams,
+    cloneCatelogBook
 } = require('../controllers/catelog_book')
 
 const FILE_TYPE_MAP = {
@@ -28,6 +29,8 @@ router.get('/find/:id', getCatelogBook)
 router.get('/by-vendor/:id', getCatelogBookByVendor)
 
 router.post('/', createCatelogBook)
+
+router.post('/clone', cloneCatelogBook)
 
 router.patch('/:id', updateCatelogBook)
 
