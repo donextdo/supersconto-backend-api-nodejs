@@ -403,13 +403,14 @@ const countDocuments = async (req, res) => {
 };
 const cloneCatelogBook = async (req, res) => {
   try {
-    const {shopId, catalogId} = req.body;
+    const {shops, catalogId} = req.body;
 
-    if (!shopId || !catalogId) {
+    if (!shops || shops?.length === 0 || !catalogId) {
       return res.status(400).json({message: "Invalid Shop or Catalog"});
     }
 
-    const targetShop = await Shop.findById(shopId).lean();
+    const shopList = await Shop.find({ _id: { $in: shops } });
+
     const catalog = await CatelogBook.findById(catalogId).populate({
       path: "pages",
       populate: {
@@ -417,60 +418,74 @@ const cloneCatelogBook = async (req, res) => {
       },
     }).lean();
 
-    if (!targetShop || !catalog) {
-      return res.status(404).json({message: "Shop or Catalog not found"});
+    if (!catalog || !shopList || shopList?.length === 0) {
+        return res.status(404).json({message: "Shops or Catalog not found"});
     }
+    const errors = []
+    const shopPromise = shopList.map(async (targetShop) => {
 
-    const {pages, ...targetCatalog} = catalog;
+      const {pages, ...targetCatalog} = catalog;
 
-    const newCatalog = await CatelogBook.create({
-      ...targetCatalog,
-      shop_id: shopId,
-      _id: new mongoose.Types.ObjectId(),
-    });
-
-    const pagePromises = pages.map(async (page, index) => {
-      const newPage = await CatelogBookPage.create({
-        ...page,
-        shop_id: shopId,
-        catelog_book_id: newCatalog._id,
+      const newCatalog = await CatelogBook.create({
+        ...targetCatalog,
+        shop_id: targetShop._id,
         _id: new mongoose.Types.ObjectId(),
       });
 
-      const itemPromises = page.items.map(async (item, index) => {
-        return await CatelogBookPageItem.create({
-          ...item,
-          shop_id: shopId,
+      const pagePromises = pages.map(async (page, index) => {
+        const newPage = await CatelogBookPage.create({
+          ...page,
+          shop_id: targetShop._id,
           catelog_book_id: newCatalog._id,
-          catelog_page_id: newPage._id,
-          quantity: 0,
           _id: new mongoose.Types.ObjectId(),
         });
+
+        const itemPromises = page.items.map(async (item, index) => {
+          return await CatelogBookPageItem.create({
+            ...item,
+            shop_id: targetShop._id,
+            catelog_book_id: newCatalog._id,
+            catelog_page_id: newPage._id,
+            quantity: 0,
+            _id: new mongoose.Types.ObjectId(),
+          });
+        });
+
+        try {
+          const items = await Promise.all(itemPromises);
+          newPage.items = items.map(i => i._id);
+          await newPage.save();
+        } catch (error) {
+          console.log(error);
+          errors.push(error.message)
+        }
+
+        return newPage;
       });
 
       try {
-        const items = await Promise.all(itemPromises);
-        newPage.items = items.map(i => i._id);
-        await newPage.save();
+        const pages = await Promise.all(pagePromises);
+        newCatalog.pages = pages.map(i => i._id);
+        await newCatalog.save();
+        targetShop.catelog_books.push(newCatalog)
+        await targetShop.save()
       } catch (error) {
         console.log(error);
-        return res
-            .status(500)
-            .json({message: "Error cloning CatelogBookPageItems"});
+        errors.push(error.message)
       }
 
-      return newPage;
-    });
+      return targetShop
+
+
+    })
 
     try {
-      const pages = await Promise.all(pagePromises);
-      newCatalog.pages = pages.map(i => i._id);
-      await newCatalog.save();
-      res.json({newCatalog});
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({message: "Error cloning CatelogBookPage"});
+      const clonedShops = await Promise.all(shopPromise)
+      res.json({clonedShops, errors})
+    } catch (e) {
+      res.status(500).json({message: "Internal Server error", error:e});
     }
+
   } catch (error) {
     console.log(error);
     res.status(500).json({message: "Internal Server error"});
