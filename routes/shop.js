@@ -12,7 +12,9 @@ const {
   getShopByVendor,
   getAllShopsParams,
   getShopByVendorParms,
-  getCheckName
+  getCheckName,
+  getFilters,
+  applyFilter
 } = require("../controllers/shop");
 const {AuthenticatedVendorMiddleware} = require("../middleware/authentication");
 
@@ -42,5 +44,11 @@ router.patch("/:id", uploadOptions.single("logo_img"), updateShop);
 router.delete("/:id", deleteShop);
 
 router.get("/count", countDocuments);
+
+router.get("/filters", getFilters)
+
+router.post("/apply-filters", applyFilter)
+
+router.post("/apply-filters-vendor",AuthenticatedVendorMiddleware, applyFilter)
 
 module.exports = router;
