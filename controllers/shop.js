@@ -246,6 +246,77 @@ const countDocuments = async (req, res) => {
   }
 };
 
+const getFilters = async (req, res, next) => {
+
+  try {
+    const uniqueValues = {};
+    const fields = Object.keys({
+      "city": "",
+      "cityCode": "",
+      "country": "",
+      "countryCode": "",
+      "administrativeOne": "",
+      "administrativeTwo": "",
+      "administrativeThree": "",
+      "street": "",
+      "route": "",
+      "postal_code": "",
+    });
+
+    for (const field of fields) {
+      uniqueValues[field] = await Shop.distinct(field).exec();
+    }
+
+    res.status(200).json(uniqueValues);
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server error" });
+  }
+
+}
+
+const applyFilter = async (req, res, next) => {
+
+  try {
+
+    const { page = 1, itemsPerPage = DEFAULT_ITEMS_PER_PAGE } = req.body.params;
+    const options = {
+      sort: { _id: -1 },
+      skip: (page - 1) * itemsPerPage,
+      limit: itemsPerPage,
+    };
+
+    // Extract filter data from the request body
+    const {vendorId,...filters} = req.body.filterData;
+
+    // Construct the query to filter the data
+    const query = {};
+
+    if (vendorId) {
+      const vendor = new mongoose.Types.ObjectId(vendorId);
+      query.vendor = vendor
+    }
+
+    for (const field in filters) {
+      if (filters[field]) {
+        query[field] = filters[field];
+      }
+    }
+    console.log(query)
+    // Use the constructed query to fetch data from MongoDB
+    const totalItems = await Shop.countDocuments(query);
+    const shops = await Shop.find(query, null, options);
+    res.json({
+      shops,
+      currentPage: page,
+      totalPages: Math.ceil(totalItems / itemsPerPage),
+    });
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+
+}
+
 module.exports = {
   getAllShops,
   createShop,
@@ -256,5 +327,7 @@ module.exports = {
   getShopByVendor,
   getAllShopsParams,
   getShopByVendorParms,
-  getCheckName
+  getCheckName,
+  getFilters,
+  applyFilter
 };

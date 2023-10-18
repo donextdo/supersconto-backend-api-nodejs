@@ -279,22 +279,49 @@ const getAllCatelogBookparams = async (req, res) => {
 
 
 const createCatelogBook = async (req, res) => {
-  const newCatelogBook = new CatelogBook({ ...req.body });
 
   try {
-    const CatelogBook = await newCatelogBook.save();
-    if (CatelogBook) {
-      await Shop.findByIdAndUpdate(
-        CatelogBook.shop_id,
-        { $push: { catelog_books: CatelogBook } },
-        { new: true }
-      );
+    const {shops, ...catalog} = req.body;
+
+    if (!shops || shops?.length === 0 || !catalog) {
+      return res.status(400).json({message: "Invalid Shop or Catalog"});
     }
 
-    res.status(201).json(CatelogBook);
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ message: "Internal Server error" });
+    const shopList = await Shop.find({ _id: { $in: shops } });
+
+    if (!shopList || shopList?.length === 0) {
+      return res.status(404).json({message: "Shops not found"});
+    }
+    const errors = []
+
+    const shopPromise = shopList.map(async (targetShop) => {
+      try{
+        const newCatalog = await CatelogBook.create({
+          ...catalog,
+          shop_id: targetShop._id,
+        });
+
+        targetShop.catelog_books.push(newCatalog)
+        await targetShop.save()
+      } catch (e) {
+        errors.push(error.message)
+
+      }
+
+      return targetShop
+    })
+
+    try {
+      const clonedShops = await Promise.all(shopPromise)
+      res.json({clonedShops, errors})
+    } catch (e) {
+      res.status(500).json({message: "Internal Server error", error:e});
+    }
+
+
+  } catch (e) {
+    console.log(error);
+    res.status(500).json({message: "Internal Server error"});
   }
 };
 
