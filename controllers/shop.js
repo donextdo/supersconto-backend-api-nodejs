@@ -1,7 +1,11 @@
 const Shop = require("../models/shop");
 const mongoose = require("mongoose");
-
+const { validationResult } = require("express-validator");
 const DEFAULT_ITEMS_PER_PAGE = 10; // Default items per page value
+const FileService = require('../middleware/s3')
+
+const dotenv = require('dotenv');
+dotenv.config();
 
 const getAllShops = async (req, res) => {
   try {
@@ -46,24 +50,45 @@ const getAllShopsParams = async (req, res) => {
   }
 };
 
+// const uploadImage = async (request, response,next) => {
+//   try {
+    
+//     const errors = validationResult(request);
+//     if (!errors.isEmpty()) {
+//         return response.status(422).json({
+//             error: true,
+//             message: 'Validation errors',
+//             data: errors,
+//         });
+//     }
+//     FileService.uploadFile(request, response, next);
+
+//   } catch (error) {
+//     request.status(500).json({ message: error.message });
+//   }
+// };
+
+
 const createShop = async (req, res) => {
   try {
     if (req.file === undefined) return res.send("you must select a file.");
-    const imgPath = `${process.env.IMG_SERVER}/public/images/${req.file.filename}`;
-    console.log("image load to publi/image folder : ", imgPath);
+    
+
+    const imgURL = await FileService.uploadFile(req, res);
+    const bucketUrl = `https://supersconto-images-bucket.s3.eu-west-3.amazonaws.com/${imgURL}`
+
+    //const imgPath = `${process.env.IMG_SERVER}/public/images/${req.file.filename}`;
     const { logo_img, ...payload } = req.body;
 
     const newShop = new Shop({
       ...payload,
-      logo_img: imgPath,
+      logo_img: bucketUrl,
       coordinates: [payload.longitude, payload.latitude]
     });
 
     const shop = await newShop.save();
-
     res.status(200).json(shop);
   } catch (error) {
-    console.log("", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -195,8 +220,11 @@ const updateShop = async (req, res) => {
 
     let logo_img = Shop.logo_img;
 
+    const imgURL = await FileService.uploadFile(req, res);
+    const bucketUrl = `https://supersconto-images-bucket.s3.eu-west-3.amazonaws.com/${imgURL}`
+
     if (file) {
-      logo_img = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
+      logo_img = bucketUrl;
     }
 
     const updatedShop = await Shop.findByIdAndUpdate(
@@ -329,5 +357,5 @@ module.exports = {
   getShopByVendorParms,
   getCheckName,
   getFilters,
-  applyFilter
+  applyFilter,
 };

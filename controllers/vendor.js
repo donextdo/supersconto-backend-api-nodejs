@@ -1,4 +1,9 @@
 const Vendor = require('../models/vendor')
+const FileService = require('../middleware/s3')
+
+const dotenv = require('dotenv');
+dotenv.config();
+
 
 const DEFAULT_ITEMS_PER_PAGE = 10; // Default items per page value
 
@@ -68,8 +73,11 @@ const createVendor = async (req, res, next) => {
 
         let profilePic = null
 
+        const imgURL = await FileService.uploadFile(req, res);
+        const bucketUrl = `https://supersconto-images-bucket.s3.eu-west-3.amazonaws.com/${imgURL}`
+
         if(file) {
-            profilePic = `${process.env.IMG_SERVER}/public/images/${file.filename}`
+            profilePic = bucketUrl
         }
     
         const {profile_pic, ...payload} = req.body
@@ -106,11 +114,17 @@ const updateVendor = async (req, res, next) => {
 
         const file = req.file
 
-        let profilePic = vendor.profilePic
+        //let profilePic = vendor.profilePic
+        let profilePic = null;
+
+        const imgURL = await FileService.uploadFile(req, res);
+        const bucketUrl = `https://supersconto-images-bucket.s3.eu-west-3.amazonaws.com/${imgURL}`
 
         if(file) {
-            profilePic = `${process.env.IMG_SERVER}/public/images/${file.filename}`
+            profilePic = bucketUrl
         }
+
+
 
         const updatedVendor = await Vendor.findByIdAndUpdate(
             id,
@@ -157,7 +171,8 @@ const updateProfilePic = async (req, res, next) => {
             })
         }
 
-        const profilePic = `${process.env.IMG_SERVER}/public/images/${file.filename}`
+        const imgURL = await FileService.uploadFile(req, res);
+        const profilePic = `https://supersconto-images-bucket.s3.eu-west-3.amazonaws.com/${imgURL}`
 
         const updatedVendor = await Vendor.findByIdAndUpdate(
             id,

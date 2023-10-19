@@ -1,7 +1,7 @@
 const express = require('express')
 const multer = require('multer')
 const storage = require('../middleware/multerStorage')
-
+const file = require('../middleware/file');
 const { 
     
     getAllCatelogBookPages, 
@@ -12,15 +12,13 @@ const {
     countDocuments 
 } = require('../controllers/catelogbook_page');
 
-const uploadOptions = multer({storage: storage})
-
 const router = express.Router()
 
 router.get('/', getAllCatelogBookPages)
 
 router.get('/find/:id', getCatelogBookPage)
 
-router.post('/', uploadOptions.single('page_image'), createCatelogBookPages)
+router.post('/', file.single('page_image'), createCatelogBookPages)
 
 router.patch('/:id', updateCatelogBookPage)
 

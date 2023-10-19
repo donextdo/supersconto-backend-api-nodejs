@@ -1,6 +1,7 @@
 const express = require('express')
 const multer = require('multer')
 const storage = require('../middleware/multerStorage')
+const file = require('../middleware/file');
 
 const { 
     getAllNews,
@@ -12,8 +13,6 @@ const {
 } = require('../controllers/news')
 
 
-const uploadOptions = multer({storage: storage})
-
 const router = express.Router()
 
 router.get('/', getAllNews)
@@ -22,9 +21,9 @@ router.get('/getall', getAllNewsParams)
 
 router.get('/find/:id', getNews)
 
-router.post('/', uploadOptions.single('images'), createNews)
+router.post('/', file.single('images'), createNews)
 
-router.patch('/:id', uploadOptions.single('images'), updateNews)
+router.patch('/:id', file.single('images'), updateNews)
 
 router.delete('/:id', deleteNews)
 

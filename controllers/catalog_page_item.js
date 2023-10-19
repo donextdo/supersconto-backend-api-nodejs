@@ -1,6 +1,10 @@
 const CatelogBookPage = require("../models/catelogbook_page");
 const CatelogBookPageItem = require("../models/catalog_page_item");
 const socketIOClient = require("socket.io-client");
+const FileService = require('../middleware/s3')
+
+const dotenv = require('dotenv');
+dotenv.config();
 
 const getAllCatelogBookPageItems = async (req, res) => {
   
@@ -38,12 +42,15 @@ const createCatelogBookPageItem = async (req, res) => {
     return res.status(400).send({ message: "No Item Image in request" });
   }
 
-  const imgPath = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
+  const imgURL = await FileService.uploadFile(req, res);
+  const bucketUrl = `https://supersconto-images-bucket.s3.eu-west-3.amazonaws.com/${imgURL}`
+
+  //const imgPath = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
   const { product_image, data } = req.body;
   const payload = JSON.parse(data);
   const newCatelogBookPageItem = new CatelogBookPageItem({
     ...payload,
-    product_image: imgPath,
+    product_image: bucketUrl,
   });
 
   try {

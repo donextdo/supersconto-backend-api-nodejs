@@ -1,5 +1,8 @@
 const Product = require("../models/product");
+const FileService = require('../middleware/s3')
 
+const dotenv = require('dotenv');
+dotenv.config();
 const getAllProducts = async (req, res) => {
   const category = req.query.category;
 
@@ -25,15 +28,20 @@ const getAllProducts = async (req, res) => {
 const createProduct = async (req, res) => {
   const files = req.files;
 
-  console.log(files);
-
   if (files.length < 1) {
     return res.status(400).send("No Document in request");
   }
 
-  const basePath = `${process.env.IMG_SERVER}/public/images/`;
-  const fileNames = files.map((file) => {
-    return `${basePath}${file.filename}`;
+  let imgURLs = [];
+
+  for (const file of files) {
+    const imgURL = await FileService.uploadFile(file);
+    imgURLs.push(imgURL);
+  }
+
+  const basePath = 'https://supersconto-images-bucket.s3.eu-west-3.amazonaws.com/';
+  const fileNames = imgURLs.map((file) => {
+    return `${basePath}${file}`;
   });
 
   const { images, ...otherData } = req.body;

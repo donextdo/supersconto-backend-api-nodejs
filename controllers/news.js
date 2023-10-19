@@ -1,6 +1,9 @@
 const News = require("../models/news");
 const DEFAULT_ITEMS_PER_PAGE = 10; // Default items per page value
+const FileService = require('../middleware/s3')
 
+const dotenv = require('dotenv');
+dotenv.config();
 
 const getAllNews = async (req, res) => {
   try {
@@ -45,17 +48,19 @@ const getAllNewsParams = async (req, res) => {
 const createNews = async (req, res) => {
   const file = req.file;
 
-  let image = null;
+  const imgURL = await FileService.uploadFile(req, res);
+  let bucketUrl = null;
+
 
   if (file) {
-    image = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
+    bucketUrl = `https://supersconto-images-bucket.s3.eu-west-3.amazonaws.com/${imgURL}`
   }
 
   const { images, ...payload } = req.body;
 
   const newNews = new News({
     ...payload,
-    image,
+    image : bucketUrl,
   });
 
   try {
@@ -113,17 +118,21 @@ const updateNews = async (req, res) => {
     }
 
     const file = req.file;
-    let image
-    if (file) {
-      image = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
-    }
+    const imgURL = await FileService.uploadFile(req, res);
+    let bucketUrl = null;
+
+
+  if (file) {
+    bucketUrl = `https://supersconto-images-bucket.s3.eu-west-3.amazonaws.com/${imgURL}`
+  }
+
 
     const updatedNews = await News.findByIdAndUpdate(
       id,
       {
         $set: {
           ...req.body,
-          image,
+          image : bucketUrl,
         },
       },
       {
