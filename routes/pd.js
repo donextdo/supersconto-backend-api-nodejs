@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
-
+const file = require('../middleware/file');
 const {
   getAllProducts,
   createProduct,
@@ -36,8 +36,6 @@ const storage = multer.diskStorage({
   },
 });
 
-const uploadOptions = multer({ storage: storage });
-
 const router = express.Router();
 
 // router.route('/').get(getAllProducts).post(createProduct)
@@ -49,7 +47,7 @@ router.get("/find/:id", getProduct);
 router.post(
   "/",
   verifyTokenAndAdmin,
-  uploadOptions.array("images", 5),
+  file.array("images", 5),
   createProduct
 );
 

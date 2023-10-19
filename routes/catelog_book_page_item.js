@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const storage = require("../middleware/multerStorage");
+const file = require('../middleware/file');
 
 const {
   getAllCatelogBookPageItems,
@@ -17,8 +18,6 @@ const {
   updateCatelogBookPageItemRemainingQuentity,
 } = require("../controllers/catalog_page_item");
 
-const uploadOptions = multer({ storage: storage });
-
 const router = express.Router();
 
 router.get("/", getAllCatelogBookPageItems);
@@ -29,7 +28,7 @@ router.post("/find-list", getCatelogBookPageItemByIds);
 
 router.post(
   "/",
-  uploadOptions.single("product_image"),
+  file.single("product_image"),
   createCatelogBookPageItem
 );
 // router.post('/', createCatelogBookPageItem)

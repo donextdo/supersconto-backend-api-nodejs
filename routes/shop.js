@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const storage = require("../middleware/multerStorage");
+const file = require('../middleware/file');
 
 const {
   getAllShops,
@@ -14,11 +15,9 @@ const {
   getShopByVendorParms,
   getCheckName,
   getFilters,
-  applyFilter
+  applyFilter,
 } = require("../controllers/shop");
 const {AuthenticatedVendorMiddleware} = require("../middleware/authentication");
-
-const uploadOptions = multer({ storage: storage });
 
 const router = express.Router();
 
@@ -33,13 +32,13 @@ router.get("/by-vendor/:id", AuthenticatedVendorMiddleware, getShopByVendor);
 
 router.get("/by-vendor-params/:id", AuthenticatedVendorMiddleware, getShopByVendorParms);
 
+router.post("/", file.single("logo_img"), createShop);
 
-router.post("/", uploadOptions.single("logo_img"), createShop);
+router.post("/check-name", file.single("logo_img"), getCheckName);
 
-router.post("/check-name", uploadOptions.single("logo_img"), getCheckName);
+router.patch("/:id", file.single("logo_img"), updateShop);
 
 
-router.patch("/:id", uploadOptions.single("logo_img"), updateShop);
 
 router.delete("/:id", deleteShop);
 

@@ -1,6 +1,9 @@
 const CatelogBookPage = require("../models/catelogbook_page");
 const CatelogBook = require("../models/catelog_book");
+const FileService = require('../middleware/s3')
 
+const dotenv = require('dotenv');
+dotenv.config();
 const createCatelogBookPages = async (req, res) => {
   const file = req.file;
 
@@ -8,11 +11,14 @@ const createCatelogBookPages = async (req, res) => {
     return res.status(400).send("No Page Image in request");
   }
 
-  const imgPath = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
+  const imgURL = await FileService.uploadFile(req, res);
+  const bucketUrl = `https://supersconto-images-bucket.s3.eu-west-3.amazonaws.com/${imgURL}`
+
+  //const imgPath = `${process.env.IMG_SERVER}/public/images/${file.filename}`;
   const { page_image, dimensions,...payload } = req.body;
   const newCatelogBookPage = new CatelogBookPage({
     ...payload,
-    page_image: imgPath,
+    page_image: bucketUrl,
     dimensions:JSON.parse(dimensions)
   });
 
