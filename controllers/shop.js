@@ -220,11 +220,10 @@ const updateShop = async (req, res) => {
 
     let logo_img = Shop.logo_img;
 
-    const imgURL = await FileService.uploadFile(req, res);
-    const bucketUrl = `https://supersconto-images-bucket.s3.eu-west-3.amazonaws.com/${imgURL}`
 
     if (file) {
-      logo_img = bucketUrl;
+      const imgURL = await FileService.uploadFile(req, res);
+      logo_img = `https://supersconto-images-bucket.s3.eu-west-3.amazonaws.com/${imgURL}`;
     }
 
     const updatedShop = await Shop.findByIdAndUpdate(

@@ -12,15 +12,13 @@ const upload = multer({
   limits: {
     fileSize: 20 * 1024 * 1024,
   },
-  fileFilter: function(req, file, cb) {
-    if (file.mimetype !== 'image/png' 
-    && file.mimetype !== 'image/gif' 
-    && file.mimetype !== 'image/jpeg') {
+  /*fileFilter: function(req, file, cb) {
+    if (!file.mimetype) {
         return cb('This file type is not supported', false);
     } else {
         cb(null, true);
     }
-  },
+  },*/
 });
 
 module.exports = upload;
