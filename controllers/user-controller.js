@@ -4,6 +4,8 @@ const User = require("../models/user");
 const auth = require("jsonwebtoken");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const express = require("express");
+const router = express.Router();
 
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 const SECRET_KEY = "your_secret_key";
@@ -246,39 +248,137 @@ const updateUserPassword = async (req, res) => {
   }
 };
 
-const addWishList = async (req, res) => {
+// const addWishList = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.params.id);
+//     console.log("user", user);
+//     const products = req.body.wishList;
+
+//     const productList = products.map((p) => ({
+//       productId: p.productId,
+//       date: p.date,
+//       front: p.front,
+//       title: p.title,
+//       price: p.price,
+//       quantity: p.quantity,
+//     }));
+
+//     user.wishList.push(...productList);
+
+//     await user.save();
+
+//     res.status(200).json({ message: "Products added to wishlist" });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+// Add a product to the wishlist
+const addToWishlist = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    console.log("user", user);
-    const products = req.body.wishList;
+    const userId = req.params.id;
+    const user = await User.findById(userId);
 
-    const productList = products.map((p) => ({
-      productId: p.productId,
-      date: p.date,
-      front: p.front,
-      title: p.title,
-      price: p.price,
-      quantity: p.quantity,
-    }));
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    user.wishList.push(...productList);
+    const { productId, date, front, title, price, quantity } = req.body;
+
+    // Check if the product already exists in the wishlist
+    const productExists = user.wishList.some(
+      (product) => product.productId === productId
+    );
+
+    if (productExists) {
+      return res.status(400).json({ message: "Product is already in the wishlist" });
+    }
+
+    const newProduct = {
+      productId,
+      date,
+      front,
+      title,
+      price,
+      quantity,
+    };
+
+    user.wishList.push(newProduct);
 
     await user.save();
 
-    res.status(200).json({ message: "Products added to wishlist" });
+    res.status(200).json({ message: "Product added to wishlist" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-const deleteFromWishList = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
 
-    // Remove the product from the wishlist array
+
+
+// const addToWishlist = async (req, res) => {
+//   try {
+//     const userId = req.params.id;
+//     const user = await User.findById(userId);
+
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     const { productId, date, front, title, price, quantity } = req.body;
+
+//     const newProduct = {
+//       productId,
+//       date,
+//       front,
+//       title,
+//       price,
+//       quantity,
+//     };
+
+//     user.wishList.push(newProduct);
+
+//     await user.save();
+
+//     res.status(200).json({ message: "Product added to wishlist" });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+// const deleteFromWishList = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.params.id);
+
+//     // Remove the product from the wishlist array
+//     user.wishList = user.wishList.filter(
+//       (product) => product.productId !== req.params.productId
+//     );
+
+//     await user.save();
+
+//     res.status(200).json({ message: "Product removed from wishlist" });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+const removeFromWishlist = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const productIdToRemove = req.params.productId;
+
     user.wishList = user.wishList.filter(
-      (product) => product.productId !== req.params.productId
+      (product) => product.productId !== productIdToRemove
     );
 
     await user.save();
@@ -324,6 +424,7 @@ const updateUser = async (req, res) => {
   }
 };
 
+
 module.exports = {
   register,
   login,
@@ -332,6 +433,8 @@ module.exports = {
   updateUserPassword,
   updateUser,
   VerifyEmailByUser,
-  addWishList,
-  deleteFromWishList
+  addToWishlist,
+  removeFromWishlist,
+
+
 };
