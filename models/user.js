@@ -34,7 +34,11 @@ const UserSchema = new Schema({
 
   isFavourite: {},
 
-  wishList: [],
+  wishList: [  
+    {
+      productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+      date: { type: Date, default: Date.now },
+    },],
 
   billingAddress: {
     type: {
