@@ -273,7 +273,7 @@ const updateUserPassword = async (req, res) => {
 //     res.status(500).json({ message: "Server error" });
 //   }
 // };
-
+// Add a product to the wishlist
 const addToWishlist = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -284,6 +284,15 @@ const addToWishlist = async (req, res) => {
     }
 
     const { productId, date, front, title, price, quantity } = req.body;
+
+    // Check if the product already exists in the wishlist
+    const productExists = user.wishList.some(
+      (product) => product.productId === productId
+    );
+
+    if (productExists) {
+      return res.status(400).json({ message: "Product is already in the wishlist" });
+    }
 
     const newProduct = {
       productId,
@@ -304,6 +313,40 @@ const addToWishlist = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
+
+// const addToWishlist = async (req, res) => {
+//   try {
+//     const userId = req.params.id;
+//     const user = await User.findById(userId);
+
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     const { productId, date, front, title, price, quantity } = req.body;
+
+//     const newProduct = {
+//       productId,
+//       date,
+//       front,
+//       title,
+//       price,
+//       quantity,
+//     };
+
+//     user.wishList.push(newProduct);
+
+//     await user.save();
+
+//     res.status(200).json({ message: "Product added to wishlist" });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 // const deleteFromWishList = async (req, res) => {
 //   try {
@@ -381,6 +424,7 @@ const updateUser = async (req, res) => {
   }
 };
 
+
 module.exports = {
   register,
   login,
@@ -390,5 +434,7 @@ module.exports = {
   updateUser,
   VerifyEmailByUser,
   addToWishlist,
-  removeFromWishlist
+  removeFromWishlist,
+
+
 };

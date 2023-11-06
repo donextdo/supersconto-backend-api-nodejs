@@ -20,4 +20,5 @@ router.post("/wishList/:id", userController. addToWishlist,);
 router.delete("/:id/wishList/:productId", userController.removeFromWishlist);
 router.get("/verify/:token", userController.VerifyEmailByUser);
 
+
 module.exports = router;
