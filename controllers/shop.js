@@ -325,7 +325,7 @@ const applyFilter = async (req, res, next) => {
 
     for (const field in filters) {
       if (filters[field]) {
-        query[field] = filters[field];
+        query[field] = { $regex: new RegExp(filters[field], 'i') };
       }
     }
     console.log(query)
