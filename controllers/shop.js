@@ -278,6 +278,8 @@ const getFilters = async (req, res, next) => {
   try {
     const uniqueValues = {};
     const fields = Object.keys({
+      "shop_name": "",
+      "customized_shop_name": "",
       "city": "",
       "cityCode": "",
       "country": "",
