@@ -41,7 +41,11 @@ const CatelogBookPageItemSchema = new mongoose.Schema(
       type: String,
     },
 
-    product_description_level_four: {
+    product_sub_category_level_four: {
+      type: String,
+    },
+
+    product_description: {
       type: String,
     },
 
