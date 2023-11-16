@@ -293,7 +293,9 @@ const getFilters = async (req, res, next) => {
     });
 
     for (const field of fields) {
-      uniqueValues[field] = await Shop.distinct(field).exec();
+      uniqueValues[field] = await Shop.distinct(field, {
+        [field]: { $regex: /^\s*|\s*$/g, $options: 'm' },
+      }).exec();
     }
 
     res.status(200).json(uniqueValues);
