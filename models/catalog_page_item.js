@@ -123,6 +123,11 @@ const CatelogBookPageItemSchema = new mongoose.Schema(
       type: Boolean,
       // required: true,
     },
+
+    online_sell: {
+      type: Boolean,
+      // required: true,
+    },
     skuNumber: {
       type: String,
       // required: true,
